@@ -1,0 +1,134 @@
+/* Customize the label (the custom-container) */
+.custom-container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.custom-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.custom-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.custom-container:hover input ~ .custom-checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.custom-container input:checked ~ .custom-checkmark {
+  background-color: #f86c6b;
+}
+
+/* Create the custom-checkmark/indicator (hidden when not checked) */
+.custom-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the custom-checkmark when checked */
+.custom-container input:checked ~ .custom-checkmark:after {
+  display: block;
+}
+
+/* Style the custom-checkmark/indicator */
+.custom-container .custom-checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 10px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+/* RADIO BUTTON */
+
+/* Customize the label (the custom-container-radio) */
+.custom-container-radio {
+  display: inline;
+  position: relative;
+  padding: 0 2rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.custom-container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.custom-checkmark-radio {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.custom-container-radio:hover input ~ .custom-checkmark-radio {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.custom-container-radio input:checked ~ .custom-checkmark-radio {
+  background-color: #f86c6b;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.custom-checkmark-radio:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.custom-container-radio input:checked ~ .custom-checkmark-radio:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.custom-container-radio .custom-checkmark-radio:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
