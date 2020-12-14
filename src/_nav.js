@@ -35,25 +35,6 @@ export default {
           icon: 'icon-flag'
         }
       ]
-    },
-    {
-      title: true,
-      name: 'Admin',
-      wrapper: {            // optional wrapper object
-        element: '',        // required valid HTML5 element tag
-        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
-      },
-      class: ''             // optional class names space delimited list for title item ex: "text-center"
-    },
-    {
-      name: 'Registrasi',
-      url: '/register',
-      icon: 'icon-user-follow'
-    },
-    {
-      name: 'Users',
-      url: '/users',
-      icon: 'icon-people'
     }
   ]
 };

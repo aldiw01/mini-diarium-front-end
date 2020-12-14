@@ -20,7 +20,7 @@ class DefaultFooter extends Component {
           <span className="d-inline d-sm-none"> {process.env.REACT_APP_ORGANIZATION_ABBR}</span>
         </span>
         <span className="ml-auto">
-          <span className="d-none d-sm-inline">Developed </span>by <a href={"mailto:" + process.env.REACT_APP_DEV_EMAIL} target="_blank" rel="noopener noreferrer" className="text-danger">Aldi Wiranata</a>
+          <span className="d-none d-sm-inline">Developed </span>by <a href={"mailto:" + process.env.REACT_APP_DEV_EMAIL} target="_blank" rel="noopener noreferrer" className="text-danger">Netbeans Team</a>
         </span>
       </React.Fragment>
     );

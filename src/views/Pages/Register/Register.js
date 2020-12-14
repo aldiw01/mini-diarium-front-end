@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { Alert, Button, ButtonDropdown, Card, CardBody, CardFooter, Col, Container, DropdownItem, DropdownMenu, DropdownToggle, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { Link, Redirect } from 'react-router-dom';
+import { Alert, Button, Card, CardBody, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import axios from 'axios';
 import AuthService from '../../../server/AuthService';
 import Spinner from 'react-spinkit';
+import bgImage from "assets/img/landing-bg.jpg";
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.Auth = new AuthService();
-    if (!this.Auth.loggedIn()) {
-      window.location = '/login';
-    }
     this.state = {
       address: '',
       badge: 'info',
@@ -21,13 +20,12 @@ class Register extends Component {
       }],
       dropdown: false,
       email: '',
-      role: "Select Role",
       isEmailClicked: false,
       isGoodEmail: false,
-      isGoodRole: false,
       isGoodName: false,
       isGoodNIK: false,
       isGoodPassword: false,
+      isLoggedin: false,
       isNameClicked: false,
       isNIKClicked: false,
       isPasswordClicked: false,
@@ -39,42 +37,16 @@ class Register extends Component {
       nik: '',
       password: '',
       passwordVal: '',
-      toggle: [false, false],
-      info: {
-        id: '',
-        name: '',
-        ACCESS_ROLES_PAGE: '',
-        ACCESS_ROLES_READ: '',
-        ACCESS_ROLES_WRITE: '',
-        value: ''
-      }
+      toggle: [false, false]
     }
   }
 
   componentDidMount() {
-    this.getData();
-  }
-
-  getData = () => {
-    axios.get(process.env.REACT_APP_API_PATH + '/roles')
-      .then(res => {
-        this.setState({ data: res.data });
+    if (this.Auth.loggedIn()) {
+      this.setState({
+        isLoggedin: true
       })
-      .catch(error => {
-        console.log(error);
-      });
-
-    axios.get(process.env.REACT_APP_API_PATH + '/infos/' + this.props.match.url.substr(1).replace(new RegExp("/", 'g'), "%2F"))
-      .then(res => {
-        this.setState({ info: res.data[0] });
-        if (!res.data[0].ACCESS_ROLES_PAGE.includes(this.Auth.getProfile().role)) {
-          window.location = '/login';
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        window.location = '/login';
-      });
+    }
   }
 
   handleCheckUsername = (event) => {
@@ -167,29 +139,14 @@ class Register extends Component {
     axios.post(process.env.REACT_APP_API_PATH + '/users', data)
       .then(res => {
         if (res.data.success) {
-          // INSERT HISTORY INTO DATABASE
-          var request = {
-            reference_id: this.state.nik,
-            user_id: this.Auth.getProfile().id,
-            step_id: "USR1",
-            message: this.state.nik
-          }
-          axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-            .catch(error => {
-              alert(error);
-              console.log(error);
-            });
-          ////////////////////////////////////////////////////////////////
           this.setState({
             address: '',
             badge: 'success',
             badgeVisible: true,
             dropdown: false,
             email: '',
-            role: "Select role",
             isEmailClicked: false,
             isGoodEmail: false,
-            isGoodRole: false,
             isGoodName: false,
             isGoodNIK: false,
             isGoodPassword: false,
@@ -212,7 +169,6 @@ class Register extends Component {
             message: res.data.message,
             badge: 'warning'
           })
-          // alert(res.data.message);
           console.log(res.data);
         }
       })
@@ -240,115 +196,98 @@ class Register extends Component {
   }
 
   render() {
-    const role = this.state.data.find(x => x.id === this.state.role)
-
     return (
-      <React.Fragment>
-        <Container>
-          <Row className="w-75 m-auto">
-            <Col xs="12">
-              <Alert color={this.state.badge} isOpen={this.state.badgeVisible} toggle={this.onDismiss}>
-                {this.state.message}
-              </Alert>
-            </Col>
-          </Row>
-          <Row className="justify-content-center">
-            <Col md="9" lg="7" xl="6">
-              <Card className="mx-4">
-                <CardBody className="p-4">
-                  <Form method="post" onSubmit={this.handleSubmit}>
-                    <h1>Register</h1>
-                    <p className="text-muted">Create your account</p>
+      this.state.isLoggedin ? <Redirect to="/dashboard" /> :
+        <React.Fragment>
+          <div style={{ backgroundImage: "url('" + bgImage + "')", backgroundSize: "cover" }}>
+            <div className="app align-items-center flex-row">
+              <Container>
+                <Row className="w-75 m-auto">
+                  <Col xs="12">
+                    <Alert color={this.state.badge} isOpen={this.state.badgeVisible} toggle={this.onDismiss}>
+                      {this.state.message}
+                    </Alert>
+                  </Col>
+                </Row>
+                <Row className="justify-content-center">
+                  <Col md="9" lg="7" xl="6">
+                    <Card className="mx-4">
+                      <CardBody className="p-4">
+                        <Form method="post" onSubmit={this.handleSubmit}>
+                          <h1>Register</h1>
+                          <p className="text-muted">Create your account</p>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-user"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="number" placeholder="NIK" name="nik" value={this.state.nik} className={!this.state.isNIKClicked ? "" : this.state.isGoodNIK && !this.state.isRegisteredNIK ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isNIKClicked: true })} onChange={this.handleCheckNIK} required />
-                    </InputGroup>
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="icon-eye"></i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input type="number" placeholder="NIK" name="nik" value={this.state.nik} className={!this.state.isNIKClicked ? "" : this.state.isGoodNIK && !this.state.isRegisteredNIK ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isNIKClicked: true })} onChange={this.handleCheckNIK} required />
+                          </InputGroup>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-eye"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" placeholder="Full Name" autoComplete="name" name="name" value={this.state.name} className={!this.state.isNameClicked ? "" : this.state.isGoodName ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isNameClicked: true })} onChange={this.handleCheckUsername} required />
-                    </InputGroup>
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="icon-user"></i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input type="text" placeholder="Full Name" autoComplete="name" name="name" value={this.state.name} className={!this.state.isNameClicked ? "" : this.state.isGoodName ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isNameClicked: true })} onChange={this.handleCheckUsername} required />
+                          </InputGroup>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>@</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="email" placeholder="Email" autoComplete="email" name="email" value={this.state.email} className={!this.state.isEmailClicked ? "" : this.state.isGoodEmail ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isEmailClicked: true })} onChange={this.handleChangeAndCheckEmail} required />
-                    </InputGroup>
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>@</InputGroupText>
+                            </InputGroupAddon>
+                            <Input type="email" placeholder="Email" autoComplete="email" name="email" value={this.state.email} className={!this.state.isEmailClicked ? "" : this.state.isGoodEmail ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isEmailClicked: true })} onChange={this.handleChangeAndCheckEmail} required />
+                          </InputGroup>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-lock"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type={this.state.toggle[0] ? "text" : "password"} placeholder="Password" autoComplete="new-password" name="password" value={this.state.password} className={!this.state.isPasswordClicked ? "" : this.state.isGoodPassword ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isPasswordClicked: true })} onChange={this.handleCheckPassword} required />
-                      <InputGroupAddon addonType="append">
-                        <Button color="light" type="button" onClick={() => this.toggleEye(0)}>
-                          <i className={this.state.toggle[0] ? "fa fa-eye" : "fa fa-eye-slash"}></i>
-                        </Button>
-                      </InputGroupAddon>
-                    </InputGroup>
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="icon-lock"></i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input type={this.state.toggle[0] ? "text" : "password"} placeholder="Password" autoComplete="new-password" name="password" value={this.state.password} className={!this.state.isPasswordClicked ? "" : this.state.isGoodPassword ? "is-valid" : "is-invalid"} onFocus={() => this.setState({ isPasswordClicked: true })} onChange={this.handleCheckPassword} required />
+                            <InputGroupAddon addonType="append">
+                              <Button color="light" type="button" onClick={() => this.toggleEye(0)}>
+                                <i className={this.state.toggle[0] ? "fa fa-eye" : "fa fa-eye-slash"}></i>
+                              </Button>
+                            </InputGroupAddon>
+                          </InputGroup>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-lock"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type={this.state.toggle[1] ? "text" : "password"} placeholder="Repeat password" autoComplete="new-password" name="passwordVal" value={this.state.passwordVal} className={!this.state.isPasswordClicked ? "" : this.state.isPasswordConfirmed ? "is-valid" : "is-invalid"} onChange={this.handleConfirmPassword} required />
-                      <InputGroupAddon addonType="append">
-                        <Button color="light" type="button" onClick={() => this.toggleEye(1)}>
-                          <i className={this.state.toggle[1] ? "fa fa-eye" : "fa fa-eye-slash"}></i>
-                        </Button>
-                      </InputGroupAddon>
-                    </InputGroup>
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="icon-lock"></i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input type={this.state.toggle[1] ? "text" : "password"} placeholder="Repeat password" autoComplete="new-password" name="passwordVal" value={this.state.passwordVal} className={!this.state.isPasswordClicked ? "" : this.state.isPasswordConfirmed ? "is-valid" : "is-invalid"} onChange={this.handleConfirmPassword} required />
+                            <InputGroupAddon addonType="append">
+                              <Button color="light" type="button" onClick={() => this.toggleEye(1)}>
+                                <i className={this.state.toggle[1] ? "fa fa-eye" : "fa fa-eye-slash"}></i>
+                              </Button>
+                            </InputGroupAddon>
+                          </InputGroup>
 
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-pencil"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-
-                      <ButtonDropdown isOpen={this.state.dropdown} toggle={this.toggle} style={{ flex: "auto" }}>
-                        <DropdownToggle className="text-left">
-                          {role ? role.name : "Select role"}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          {this.state.data.map((item, i) =>
-                            item.id > this.Auth.getProfile().role && item.id !== "9" ?
-                              <DropdownItem key={i} onClick={() => this.setState({ role: item.id, isGoodRole: true })}>
-                                {item.name}
-                              </DropdownItem>
-                              : ""
-                          )}
-                        </DropdownMenu>
-                      </ButtonDropdown>
-                    </InputGroup>
-
-                    <Button color="danger" block type="submit" disabled={!this.state.isGoodName || !this.state.isGoodPassword || this.state.isRegisteredNIK || !this.state.isPasswordConfirmed || !this.state.isGoodRole || this.state.loader} >
-                      {this.state.loader ? <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" /> : "Create Account"}
-                    </Button>
-                  </Form>
-                </CardBody>
-                <CardFooter>
-                  <span className="float-right"><a href="mailto:imvlaboratory@gmail.com" target="_blank" rel="noopener noreferrer" className="text-danger">{process.env.REACT_APP_NAME}</a> &copy; {new Date().getFullYear()} {process.env.REACT_APP_ORGANIZATION}</span>
-                </CardFooter>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </React.Fragment>
+                          <Button color="danger" block type="submit" disabled={!this.state.isGoodName || !this.state.isGoodPassword || this.state.isRegisteredNIK || !this.state.isPasswordConfirmed || this.state.loader} >
+                            {this.state.loader ? <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" /> : "Create Account"}
+                          </Button>
+                          <Link to="/login">
+                            <Button color="primary" className="w-100 mt-4" active tabIndex={-1}>Login</Button>
+                          </Link>
+                        </Form>
+                      </CardBody>
+                      <CardFooter>
+                        <span className="float-right"><a href={process.env.REACT_APP_EMAIL} target="_blank" rel="noopener noreferrer" className="text-danger">{process.env.REACT_APP_NAME}</a> &copy; {new Date().getFullYear()} {process.env.REACT_APP_ORGANIZATION}</span>
+                      </CardFooter>
+                    </Card>
+                  </Col>
+                </Row>
+              </Container>
+            </div>
+          </div>
+        </React.Fragment>
     );
   }
 }

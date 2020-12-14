@@ -26,7 +26,6 @@ class Profile extends Component {
         NIK: '',
         Name: '',
         Role: '',
-        Telp: '',
         Email: '',
         Registered: '',
         Updated: ''
@@ -35,7 +34,6 @@ class Profile extends Component {
         NIK: '',
         Name: '',
         Role: '',
-        Telp: '',
         Email: '',
         Registered: '',
         Updated: ''
@@ -61,7 +59,6 @@ class Profile extends Component {
             NIK: res.data[0].id,
             Name: res.data[0].name,
             Role: res.data[0].role,
-            Telp: res.data[0].telp,
             Email: res.data[0].email,
             Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
             Updated: new Date(res.data[0].updated).toLocaleString('en-GB')

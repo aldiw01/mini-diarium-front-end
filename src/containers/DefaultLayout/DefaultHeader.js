@@ -95,9 +95,9 @@ class DefaultHeader extends Component {
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center">
-                <strong>Requests</strong>
+                <strong>Notifications</strong>
               </DropdownItem>
-              <Link to="/requests">
+              {/* <Link to="/requests">
                 <DropdownItem><i className="icon-plus"></i> Add
                 <Badge color="success">{this.state.notification.add}</Badge>
                 </DropdownItem>
@@ -116,7 +116,7 @@ class DefaultHeader extends Component {
                 <DropdownItem><i className="icon-speech"></i> My Requests
                 <Badge color="primary">{this.state.notification.myRequests}</Badge>
                 </DropdownItem>
-              </Link>
+              </Link> */}
             </DropdownMenu>
           </AppHeaderDropdown>
 
@@ -130,9 +130,6 @@ class DefaultHeader extends Component {
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center"><strong>{user}</strong></DropdownItem>
-              <Link to="/requests" className="nav-link">
-                <DropdownItem><i className="icon-speech"></i> My Requests</DropdownItem>
-              </Link>
               <Link to="/profile" className="nav-link">
                 <DropdownItem><i className="icon-user"></i> Profile</DropdownItem>
               </Link>

@@ -7,7 +7,7 @@ const Dashboard = React.lazy(() => import('./views/Admin/Dashboard'));
 const Archives = React.lazy(() => import('./views/Admin/Archives'));
 
 const Profile = React.lazy(() => import('./views/Profile/Profile'));
-const Register = React.lazy(() => import('./views/Pages/Register'));
+// const Register = React.lazy(() => import('./views/Pages/Register'));
 const Page404 = React.lazy(() => import('./views/Pages/Page404'));
 
 const routes = [
@@ -23,7 +23,7 @@ const routes = [
   { path: '/archives/accreditations', name: 'Akreditasi', component: Archives },
 
   { path: '/profile', name: 'Profile', component: Profile },
-  { path: '/register', name: 'Register', component: Register },
+  // { path: '/register', name: 'Register', component: Register },
   { path: '/:id', name: 'Page 404', component: Page404 }
 ];
 

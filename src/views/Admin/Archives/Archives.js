@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, CardHeader, Col, Collapse, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { MDBDataTable } from 'mdbreact';
 import axios from 'axios';
 import AuthService from 'server/AuthService';
@@ -7,7 +7,6 @@ import AddArchive from 'components/Modals/Archives/AddArchive';
 import EditArchive from 'components/Modals/Archives/EditArchive';
 import DeleteArchive from 'components/Modals/Archives/DeleteArchive';
 import ViewArchive from 'components/Modals/Archives/ViewArchive';
-import EditInfo from 'components/Modals/Infos/EditInfo';
 
 class Archives extends Component {
 
@@ -63,22 +62,6 @@ class Archives extends Component {
         standard_level_id: '',
         file: ''
       },
-      info: {
-        id: '',
-        name: '',
-        ACCESS_ROLES_PAGE: '',
-        ACCESS_ROLES_READ: '',
-        ACCESS_ROLES_WRITE: '',
-        value: ''
-      },
-      focusInfo: {
-        id: '',
-        name: '',
-        ACCESS_ROLES_PAGE: '',
-        ACCESS_ROLES_READ: '',
-        ACCESS_ROLES_WRITE: '',
-        value: ''
-      },
       tab: [{
         id: '',
         name: ''
@@ -109,17 +92,6 @@ class Archives extends Component {
           .catch(error => {
             console.log(error);
           });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-    axios.get(process.env.REACT_APP_API_PATH + '/infos/' + this.props.match.url.substr(1).replace(new RegExp("/", 'g'), "%2F"))
-      .then(res => {
-        this.setState({ info: res.data[0] });
-        if (!res.data[0].ACCESS_ROLES_PAGE.includes(this.Auth.getProfile().role)) {
-          window.location = '/login';
-        }
       })
       .catch(error => {
         console.log(error);
@@ -404,10 +376,6 @@ class Archives extends Component {
   }
 
   render() {
-    const { ACCESS_ROLES_READ, ACCESS_ROLES_WRITE } = this.state.info;
-
-    const role = this.Auth.getProfile().role
-
     var columns = [
       {
         label: 'No',
@@ -459,17 +427,14 @@ class Archives extends Component {
               <i className="fa fa-folder-open"></i>
             </button>
 
-            {/* THIS ACTION(S) RESTRICTED BY SPECIFIC USER ROLE ACCESS */}
-            {ACCESS_ROLES_WRITE.includes(role) ?
-              <React.Fragment>
-                <button title="Edit Data" className="px-3 py-1 mr-1 btn btn-warning" onClick={() => toggleEdit(i)}>
-                  <i className="fa fa-pencil"></i>
-                </button>
-                <button title="Delete Data" className="px-3 py-1 mr-1 btn btn-danger" onClick={() => toggleDelete(i)}>
-                  <i className="fa fa-minus-circle"></i>
-                </button>
-              </React.Fragment> : ""}
-            {/* ---------------------------------------------------------------- */}
+            <React.Fragment>
+              <button title="Edit Data" className="px-3 py-1 mr-1 btn btn-warning" onClick={() => toggleEdit(i)}>
+                <i className="fa fa-pencil"></i>
+              </button>
+              <button title="Delete Data" className="px-3 py-1 mr-1 btn btn-danger" onClick={() => toggleDelete(i)}>
+                <i className="fa fa-minus-circle"></i>
+              </button>
+            </React.Fragment>
 
           </div>
         });
@@ -491,46 +456,16 @@ class Archives extends Component {
       <div className="animated fadeIn">
         <Row>
           <Col xs="12" xl="12">
-            <Card className="card-accent-danger mb-1">
-              <CardHeader>
-                <strong>{this.state.info.name}</strong>
-                <div className="card-header-actions">
-                  {/*eslint-disable-next-line*/}
-                  <a className="card-header-action btn btn-minimize" data-target="#details" onClick={this.toggle}><i className={this.state.collapse ? "icon-arrow-up" : "icon-arrow-down"}></i></a>
-                </div>
-
-                {/* THIS ACTION(S) RESTRICTED BY SPECIFIC USER ROLE ACCESS */}
-                {ACCESS_ROLES_WRITE.includes(role) ?
-                  <div style={{ position: "absolute", right: "3rem", top: "0.4rem" }}>
-                    <Button title="Edit Info" color="secondary" className="float-right" onClick={this.toggleEditInfo}>
-                      <i className="fa fa-pencil"></i>
-                    </Button>
-                  </div> : ""}
-                {/* ---------------------------------------------------------------- */}
-
-              </CardHeader>
-              <Collapse isOpen={this.state.collapse} id="details">
-                <CardBody>
-                  {this.state.info.value}
-                </CardBody>
-              </Collapse>
-            </Card>
-          </Col>
-          <Col xs="12" xl="12">
             <Card>
               <CardHeader>
-                <i className="fa fa-align-justify"></i>
+                <i className="fa fa-align-justify"></i><strong> Archives</strong>
 
-                {/* THIS ACTION(S) RESTRICTED BY SPECIFIC USER ROLE ACCESS */}
-                {ACCESS_ROLES_WRITE.includes(role) ?
-                  <div style={csvButton}>
-                    <Button title="Add Data" color="success" className="float-right" onClick={this.toggleAdd}>
-                      Tambah{' '}
-                      <i className="fa fa-plus"></i>
-                    </Button>
-                  </div>
-                  : ""}
-                {/* ---------------------------------------------------------------- */}
+                <div style={csvButton}>
+                  <Button title="Add Data" color="success" className="float-right" onClick={this.toggleAdd}>
+                    Tambah{' '}
+                    <i className="fa fa-plus"></i>
+                  </Button>
+                </div>
 
               </CardHeader>
               <CardBody>
@@ -571,16 +506,6 @@ class Archives extends Component {
                   </TabContent>
                 </Col>
 
-                <EditInfo
-                  edit={this.state.edit_info}
-                  data={this.state.focusInfo}
-                  id={this.state.id}
-                  handleEdit={this.handleEditInfo}
-                  handleChange={this.handleChangeInfo}
-                  loader={this.state.loader}
-                  toggleEdit={this.toggleEditInfo}
-                />
-
                 <AddArchive
                   add={this.state.add}
                   data={this.state.new}
@@ -593,7 +518,6 @@ class Archives extends Component {
                 />
 
                 <ViewArchive
-                  ACCESS_ROLES_READ={ACCESS_ROLES_READ}
                   data={this.state.focus}
                   id={this.state.id}
                   toggleView={this.toggleView}

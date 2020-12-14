@@ -6,7 +6,6 @@ import AuthService from 'server/AuthService';
 import History from 'components/Modules/HistoryList';
 
 const propTypes = {
-  ACCESS_ROLES_READ: PropTypes.string,
   data: PropTypes.object,
   id: PropTypes.number,
   toggleView: PropTypes.func,
@@ -92,9 +91,8 @@ class ViewArchive extends Component {
 
   render() {
 
-    const { ACCESS_ROLES_READ, data, id, toggleView, view } = this.props;
+    const { data, id, toggleView, view } = this.props;
     const table = data.standard_level_id.includes("T") ? "test_references" : "archives";
-    const role = this.Auth.getProfile().role
 
     var viewStyle = {
       overflowWrap: 'break-word'
@@ -133,12 +131,12 @@ class ViewArchive extends Component {
 
                 <Col xs="3">Download File</Col>
                 <Col xs="9" className="border-bottom mt-auto" style={viewStyle}>
-                  {data.file && ACCESS_ROLES_READ.includes(role) ?
+                  {data.file ?
                     <a title="File" onClick={() => this.postHistory("STEL PDF")} className="btn btn-secondary mr-1" href={`${process.env.REACT_APP_API_PATH}/uploads/${table}/${data.file}`} target="_blank" rel="noopener noreferrer">
                       <i className="fa fa-file"></i> File
                     </a> : ""}
 
-                  {data.file_doc && ACCESS_ROLES_READ.includes(role) ?
+                  {data.file_doc ?
                     <a title="File DOC" onClick={() => this.postHistory("STEL DOC")} className="btn btn-primary mr-1" href={`${process.env.REACT_APP_API_PATH}/uploads/${table}/${data.file_doc}`} target="_blank" rel="noopener noreferrer">
                       <i className="fa fa-file-word-o"></i> DOC
                     </a> : ""}

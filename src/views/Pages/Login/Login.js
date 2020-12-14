@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Alert, Button, Card, CardBody, CardFooter, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import AuthService from '../../../server/AuthService';
 import axios from 'axios';
@@ -183,7 +183,10 @@ class Login extends Component {
                         <CardBody className="text-center">
                           <div>
                             <h2>Sign up</h2>
-                            <p className="mt-5">Please contact web admin to register your account.</p>
+                            <p>Register first if you don't have accont yet.</p>
+                            <Link to="/register">
+                              <Button color="danger" className="mt-3" active tabIndex={-1}>Register Now!</Button>
+                            </Link>
                           </div>
                         </CardBody>
                       </Card>
