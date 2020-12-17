@@ -1,31 +1,10 @@
-import React, { Component, Suspense } from 'react';
-import { Button, Card, CardBody, Carousel, CarouselCaption, CarouselControl, CarouselIndicators, CarouselItem, Col, Form, FormGroup, Input, InputGroup, InputGroupAddon, Row } from 'reactstrap';
-// import axios from 'axios';
+import React, { Component } from 'react';
+import { Button, Card, CardBody, Col, Row } from 'reactstrap';
+import axios from 'axios';
 import Spinner from 'react-spinkit';
-import { Link } from 'react-router-dom';
 import AuthService from 'server/AuthService';
-
-import cert1 from "assets/img/certificates/cert1.jpg";
-import cert2 from "assets/img/certificates/cert2.jpg";
-import cert3 from "assets/img/certificates/cert3.jpg";
-
-const items = [
-  {
-    src: cert1,
-    altText: 'Slide 1',
-    caption: ''
-  },
-  {
-    src: cert2,
-    altText: 'Slide 2',
-    caption: ''
-  },
-  {
-    src: cert3,
-    altText: 'Slide 3',
-    caption: ''
-  },
-];
+import AddCheckin from 'components/Modals/Presence/AddCheckin';
+import AddCheckout from 'components/Modals/Presence/AddCheckout';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -35,14 +14,30 @@ class Dashboard extends Component {
       window.location = '/login';
     }
     this.state = {
-      activeIndex: 0,
-      something: ''
+      checkin: false,
+      checkout: false,
+      presence: [{
+                  id: '', 
+                  user_id: '', 
+                  created:''
+                }]
     };
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-    this.goToIndex = this.goToIndex.bind(this);
-    this.onExiting = this.onExiting.bind(this);
-    this.onExited = this.onExited.bind(this);
+  }
+
+  componentDidMount() {
+    this.getData();
+  }
+
+  getData = () => {
+    var tanggal = new Date().toISOString();
+    
+    axios.get(process.env.REACT_APP_API_PATH + '/presence/user/' + this.Auth.getProfile().id + '/' + tanggal)
+      .then(res => {
+        this.setState({ presence: res.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   loading = () =>
@@ -50,100 +45,125 @@ class Dashboard extends Component {
       <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" />
     </div>
 
-  handleChange = (event) => {
+  handleCheckin = (event) => {
+    event.preventDefault();
+    if (window.confirm("You will create change(s) on database. Are you sure?")) {
+      this.setState({ loader: true });
+      var data = {
+        user_id: this.Auth.getProfile().id,
+        status: 1, // checkin 1
+      }
+
+      axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
+        .then(res => {
+          this.setState({
+            checkin : false
+          });
+          this.getData();
+          alert(res.data.message);
+        })
+        .catch(error => {
+          alert(error);
+          console.log(error);
+        });
+    }
+  }
+
+  handleCheckout = (event) => {
+    event.preventDefault();
+    if (window.confirm("You will create change(s) on database. Are you sure?")) {
+      this.setState({ loader: true });
+      var data = {
+        user_id: this.Auth.getProfile().id,
+        status: 2, // checkout 2
+      }
+
+      axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
+        .then(res => {
+          this.setState({
+            checkout : false,
+            finish: true,
+          });
+          this.getData();
+          alert(res.data.message);
+        })
+        .catch(error => {
+          alert(error);
+          console.log(error);
+        });
+    }
+  }
+
+  toggleCheckin = () => {
     this.setState({
-      [event.target.name]: event.target.value
-    })
+      checkin: !this.state.checkin,
+    });
   }
 
-  onExiting() {
-    this.animating = true;
-  }
-
-  onExited() {
-    this.animating = false;
-  }
-
-  next() {
-    if (this.animating) return;
-    const nextIndex = this.state.activeIndex === items.length - 1 ? 0 : this.state.activeIndex + 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  previous() {
-    if (this.animating) return;
-    const nextIndex = this.state.activeIndex === 0 ? items.length - 1 : this.state.activeIndex - 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  goToIndex(newIndex) {
-    if (this.animating) return;
-    this.setState({ activeIndex: newIndex });
+  toggleCheckout = () => {
+    this.setState({
+      checkout: !this.state.checkout,
+    });
   }
 
   render() {
-    const { activeIndex } = this.state;
-
-    const slides = items.map((item) => {
-      return (
-        <CarouselItem
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-          key={item.src}
-        >
-          <img className="d-block w-100" src={item.src} alt={item.altText} />
-          <CarouselCaption captionText={item.caption} captionHeader={item.caption} />
-        </CarouselItem>
-      );
-    });
+    const user = this.Auth.getProfile().name;
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
 
     return (
       <div className="animated fadeIn">
+        
         <Row>
-          <Col xs="12">
-            <Form method="post" className="form-horizontal">
-              <FormGroup>
-                <div className="controls shadow">
-                  <InputGroup>
-                    <Input id="appendedInputButton" name="something" value={this.state.something} onChange={this.handleChange} placeholder="Search document(s) ..." type="text" required />
-                    <InputGroupAddon addonType="append">
-                      <Link to={"/search/" + this.state.something.replace("/", "%2f").trim()}>
-                        <Button title="Search" color="danger" type="submit"><i className="fa fa-search"></i></Button>
-                      </Link>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </div>
-              </FormGroup>
-            </Form>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col xs="12" xl="7" className="mb-3">
-            <Suspense fallback={this.loading}>
-              <Carousel activeIndex={activeIndex} next={this.next} previous={this.previous}>
-                <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
-                {slides}
-                <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-                <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-              </Carousel>
-            </Suspense>
-          </Col>
-          <Col xs="12" xl="5">
+          <Col xs="12" xl="12">
             <Card className="text-white bg-dark py-3">
               <CardBody className="text-center">
-                <div>
-                  <h2>Selamat datang di Sistem Informasi Dokumen Mutu Online <br />(Sidomo)</h2>
+                
+                {
+                  this.state.presence[0].status==='1' ?
+                  <div>
+                  <h2>Anda sudah checkin pada : {new Date(this.state.presence[0].created).toString()}</h2>
                   <p className="mt-4" style={{ fontSize: "0.95rem" }}>
-                    Sistem Informasi Dokumen Mutu Online (Sidomo) merupakan aplikasi web penyimpanan dokumen mutu untuk menjamin dokumen Sistem Manajemen Mutu (SMM) Telkom Test House (TTH) selalu terkendali dan menjadi tidak terkendali apabila dicetak.<br /><br />
-                    Dokumen mutu yang dapat diakses adalah Daftar Induk Dokumen Internal (DIDI) yang diterbitkan oleh TTH meliputi: Panduan Mutu, Prosedur, Instruksi Kerja/Test Procedure, dan Form. Selain DIDI dalam dokumen mutu juga dapat diakses rekaman dan arsip (kebijakan & regulasi, referensi uji, informasi & publikasi).<br /><br />
-                    Admin aplikasi ini adalah Pengendali Dokumen.
+                      Anda belum checkout, silahkan checkout dulu..
                   </p>
+                  <Button className="btn btn-lg" color="light" type="button" onClick={this.toggleCheckout}>Checkout</Button>
                 </div>
+                : this.state.presence[0].status==='2' ?
+                  <div>
+                    <h2>Terima kasih untuk hari ini, sampai jumpa besok, {user}</h2>
+                    <p>Checkin : {new Date(this.state.presence[1].created).toString()}</p>
+                    <p>Checkout: {new Date(this.state.presence[0].created).toString()}</p>
+                  </div> 
+                :       
+                  <div>
+                  <h2>Selamat datang, {user}</h2>
+                  <p className="mt-4" style={{ fontSize: "0.95rem" }}>
+                      Sekarang tanggal {date} Jam {time} <br/>
+                      Anda belum checkin, silahkan checkin dulu..
+                  </p>
+                  <Button className="btn btn-lg" color="light" type="button" onClick={this.toggleCheckin}>Checkin</Button>
+                  </div>
+                }
+
               </CardBody>
             </Card>
           </Col>
         </Row>
+
+        <AddCheckin
+          checkin={this.state.checkin}
+          loader={this.state.loader}
+          toggleCheckin={this.toggleCheckin}
+          handleCheckin={this.handleCheckin}
+        />
+
+        <AddCheckout
+          checkout={this.state.checkout}
+          loader={this.state.loader}
+          toggleCheckout={this.toggleCheckout}
+          handleCheckout={this.handleCheckout}
+        />
+
 
       </div>
     );

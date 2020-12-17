@@ -4,8 +4,8 @@ import { Badge, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 
 import PropTypes from 'prop-types';
 
 import { AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/logo.svg'
-import sygnet from '../../assets/img/mascot.svg'
+import logo from '../../assets/img/logo.png'
+import sygnet from '../../assets/img/logo.png'
 import AuthService from '../../server/AuthService'
 import axios from 'axios'
 
@@ -74,13 +74,8 @@ class DefaultHeader extends Component {
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
-            <NavLink to="/dashboard" className="nav-link" >Dashboard</NavLink>
+            <NavLink to="/dashboard" className="nav-link" >Home</NavLink>
           </NavItem>
-          {this.props.ACCESS_ROLES_PAGE.includes(this.Auth.getProfile().role) ?
-            <NavItem className="px-3">
-              <Link to="/users" className="nav-link">Users</Link>
-            </NavItem> : ""
-          }
         </Nav>
 
         <Nav className="ml-auto" navbar>
