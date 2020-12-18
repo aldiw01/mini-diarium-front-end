@@ -4,7 +4,9 @@ import { Alert, Button, Card, CardBody, CardFooter, Col, Container, Form, Input,
 import axios from 'axios';
 import AuthService from '../../../server/AuthService';
 import Spinner from 'react-spinkit';
+
 import bgImage from "assets/img/landing-bg.jpg";
+import logo from "assets/img/logo.png";
 
 class Register extends Component {
   constructor(props) {
@@ -279,6 +281,7 @@ class Register extends Component {
                         </Form>
                       </CardBody>
                       <CardFooter>
+                        <img src={logo} alt="Mini-Diarium" style={{ height: "30px", position: "absolute", bottom: "8px" }} />
                         <span className="float-right"><a href={process.env.REACT_APP_EMAIL} target="_blank" rel="noopener noreferrer" className="text-danger">{process.env.REACT_APP_NAME}</a> &copy; {new Date().getFullYear()} {process.env.REACT_APP_ORGANIZATION}</span>
                       </CardFooter>
                     </Card>

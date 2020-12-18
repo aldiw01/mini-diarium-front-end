@@ -35,15 +35,6 @@ class EditProfile extends Component {
 
             <FormGroup row>
               <Col md="3">
-                Telepon / HP
-              </Col>
-              <Col xs="12" md="9">
-                <Input type="number" onChange={handleChange} name="Telp" value={data.Telp} />
-              </Col>
-            </FormGroup>
-
-            <FormGroup row>
-              <Col md="3">
                 Email *
               </Col>
               <Col xs="12" md="9">

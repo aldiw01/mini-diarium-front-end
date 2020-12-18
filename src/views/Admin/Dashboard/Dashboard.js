@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, Col, Row } from 'reactstrap';
+import { Card, CardBody, Col, Row } from 'reactstrap';
 import axios from 'axios';
 import Spinner from 'react-spinkit';
 import AuthService from 'server/AuthService';
+
 import AddCheckin from 'components/Modals/Presence/AddCheckin';
 import AddCheckout from 'components/Modals/Presence/AddCheckout';
+
+import Home from 'components/Modules/Home';
+import CheckIn from 'components/Modules/CheckIn';
+import CheckOut from 'components/Modules/CheckOut';
+
+import Activities from 'views/Admin/Activities';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -16,21 +23,33 @@ class Dashboard extends Component {
     this.state = {
       checkin: false,
       checkout: false,
+      now: new Date().toString('en-GB'),
       presence: [{
-                  id: '', 
-                  user_id: '', 
-                  created:''
-                }]
+        id: '',
+        user_id: '',
+        status: '',
+        created: ''
+      }]
     };
   }
 
   componentDidMount() {
+    this.myInterval = setInterval(() => {
+      this.setState({
+        now: new Date().toString('en-GB')
+      })
+    }, 1000)
+
     this.getData();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.myInterval);
   }
 
   getData = () => {
     var tanggal = new Date().toISOString();
-    
+
     axios.get(process.env.REACT_APP_API_PATH + '/presence/user/' + this.Auth.getProfile().id + '/' + tanggal)
       .then(res => {
         this.setState({ presence: res.data });
@@ -47,26 +66,24 @@ class Dashboard extends Component {
 
   handleCheckin = (event) => {
     event.preventDefault();
-    if (window.confirm("You will create change(s) on database. Are you sure?")) {
-      this.setState({ loader: true });
-      var data = {
-        user_id: this.Auth.getProfile().id,
-        status: 1, // checkin 1
-      }
-
-      axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
-        .then(res => {
-          this.setState({
-            checkin : false
-          });
-          this.getData();
-          alert(res.data.message);
-        })
-        .catch(error => {
-          alert(error);
-          console.log(error);
-        });
+    this.setState({ loader: true });
+    var data = {
+      user_id: this.Auth.getProfile().id,
+      status: 1, // checkin 1
     }
+
+    axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
+      .then(res => {
+        this.setState({
+          checkin: false
+        });
+        this.getData();
+        // alert(res.data.message);
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
   }
 
   handleCheckout = (event) => {
@@ -81,11 +98,11 @@ class Dashboard extends Component {
       axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
         .then(res => {
           this.setState({
-            checkout : false,
+            checkout: false,
             finish: true,
           });
           this.getData();
-          alert(res.data.message);
+          // alert(res.data.message);
         })
         .catch(error => {
           alert(error);
@@ -107,63 +124,70 @@ class Dashboard extends Component {
   }
 
   render() {
-    const user = this.Auth.getProfile().name;
-    const date = new Date().toLocaleDateString();
-    const time = new Date().toLocaleTimeString();
 
     return (
       <div className="animated fadeIn">
-        
+
         <Row>
           <Col xs="12" xl="12">
-            <Card className="text-white bg-dark py-3">
+            <Card className="text-white bg-dark">
               <CardBody className="text-center">
-                
-                {
-                  this.state.presence[0].status==='1' ?
-                  <div>
-                  <h2>Anda sudah checkin pada : {new Date(this.state.presence[0].created).toString()}</h2>
-                  <p className="mt-4" style={{ fontSize: "0.95rem" }}>
-                      Anda belum checkout, silahkan checkout dulu..
-                  </p>
-                  <Button className="btn btn-lg" color="light" type="button" onClick={this.toggleCheckout}>Checkout</Button>
-                </div>
-                : this.state.presence[0].status==='2' ?
-                  <div>
-                    <h2>Terima kasih untuk hari ini, sampai jumpa besok, {user}</h2>
-                    <p>Checkin : {new Date(this.state.presence[1].created).toString()}</p>
-                    <p>Checkout: {new Date(this.state.presence[0].created).toString()}</p>
-                  </div> 
-                :       
-                  <div>
-                  <h2>Selamat datang, {user}</h2>
-                  <p className="mt-4" style={{ fontSize: "0.95rem" }}>
-                      Sekarang tanggal {date} Jam {time} <br/>
-                      Anda belum checkin, silahkan checkin dulu..
-                  </p>
-                  <Button className="btn btn-lg" color="light" type="button" onClick={this.toggleCheckin}>Checkin</Button>
-                  </div>
+                {this.state.presence[0].status === '1' ?
+                  // IF STATUS = 1, USER ALREADY CHECK IN
+                  <React.Fragment>
+                    <CheckIn
+                      data={this.state.presence}
+                      now={this.state.now}
+                      toggleCheckout={this.toggleCheckout}
+                      user={this.Auth.getProfile().name}
+                    />
+                  </React.Fragment>
+                  : this.state.presence[0].status === '2' ?
+                    // IF STATUS = 2, USER ALREADY CHECK OUT
+                    <React.Fragment>
+                      <CheckOut
+                        data={this.state.presence}
+                        now={this.state.now}
+                        toggleCheckout={this.toggleCheckout}
+                        user={this.Auth.getProfile().name}
+                      />
+                    </React.Fragment>
+                    :
+                    // ELSE, USER IS NOT CHECK IN
+                    <React.Fragment>
+                      <Home
+                        now={this.state.now}
+                        toggleCheckin={this.toggleCheckin}
+                        user={this.Auth.getProfile().name}
+                      />
+                    </React.Fragment>
                 }
 
+                <AddCheckin
+                  checkin={this.state.checkin}
+                  loader={this.state.loader}
+                  toggleCheckin={this.toggleCheckin}
+                  handleCheckin={this.handleCheckin}
+                />
+
+                <AddCheckout
+                  checkout={this.state.checkout}
+                  loader={this.state.loader}
+                  toggleCheckout={this.toggleCheckout}
+                  handleCheckout={this.handleCheckout}
+                />
               </CardBody>
             </Card>
           </Col>
         </Row>
 
-        <AddCheckin
-          checkin={this.state.checkin}
-          loader={this.state.loader}
-          toggleCheckin={this.toggleCheckin}
-          handleCheckin={this.handleCheckin}
-        />
-
-        <AddCheckout
-          checkout={this.state.checkout}
-          loader={this.state.loader}
-          toggleCheckout={this.toggleCheckout}
-          handleCheckout={this.handleCheckout}
-        />
-
+        <Row className={this.state.presence[0].status === '' ? "d-none" : ""}>
+          <Col xs="12" xl="12">
+            <Activities
+              path={this.props.match.path}
+            />
+          </Col>
+        </Row>
 
       </div>
     );

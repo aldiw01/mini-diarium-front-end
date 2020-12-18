@@ -58,7 +58,6 @@ class Profile extends Component {
           data: [{
             NIK: res.data[0].id,
             Name: res.data[0].name,
-            Role: res.data[0].role,
             Email: res.data[0].email,
             Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
             Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
@@ -162,22 +161,6 @@ class Profile extends Component {
             edit_password: !this.state.edit_password,
             loader: false,
           })
-          // INSERT HISTORY INTO DATABASE
-          var request = {
-            reference_id: this.Auth.getProfile().id,
-            user_id: this.Auth.getProfile().id,
-            step_id: "USR6",
-            message: this.Auth.getProfile().id
-          }
-          axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-            .then(() => {
-              this.getData();
-            })
-            .catch(error => {
-              alert(error);
-              console.log(error);
-            });
-          ////////////////////////////////////////////////////////////////
           alert(res.data.message);
           this.getData();
         })
@@ -201,22 +184,6 @@ class Profile extends Component {
             loader: false,
             profile_photo: ''
           })
-          // INSERT HISTORY INTO DATABASE
-          var request = {
-            reference_id: this.Auth.getProfile().id,
-            user_id: this.Auth.getProfile().id,
-            step_id: "USR5",
-            message: this.Auth.getProfile().id
-          }
-          axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-            .then(() => {
-              this.getData();
-            })
-            .catch(error => {
-              alert(error);
-              console.log(error);
-            });
-          ////////////////////////////////////////////////////////////////
           alert(res.data.message);
           window.location.reload()
         })
@@ -231,28 +198,16 @@ class Profile extends Component {
     event.preventDefault();
     if (window.confirm("You will change your profile picture. Are you sure?")) {
       this.setState({ loader: true });
-      axios.put(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id, this.state.focus)
+      var request = {
+        name: this.state.focus.Name,
+        email: this.state.focus.Email
+      }
+      axios.put(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id, request)
         .then(res => {
           this.setState({
             edit_profile: !this.state.edit_profile,
             loader: false,
           })
-          // INSERT HISTORY INTO DATABASE
-          var request = {
-            reference_id: this.Auth.getProfile().id,
-            user_id: this.Auth.getProfile().id,
-            step_id: "USR2",
-            message: this.Auth.getProfile().id
-          }
-          axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-            .then(() => {
-              this.getData();
-            })
-            .catch(error => {
-              alert(error);
-              console.log(error);
-            });
-          ////////////////////////////////////////////////////////////////
           alert(res.data.message);
           this.getData();
         })

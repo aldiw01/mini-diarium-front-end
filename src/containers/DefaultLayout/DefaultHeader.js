@@ -5,18 +5,12 @@ import PropTypes from 'prop-types';
 
 import { AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
 import logo from '../../assets/img/logo.png'
-import sygnet from '../../assets/img/logo.png'
+import mascot from '../../assets/img/mascot.png'
 import AuthService from '../../server/AuthService'
 import axios from 'axios'
 
 const propTypes = {
   children: PropTypes.node,
-};
-
-const defaultProps = {
-  ACCESS_ROLES_PAGE: [
-    "1", "2A1", "2A2", "2B", "2C"
-  ]
 };
 
 class DefaultHeader extends Component {
@@ -68,7 +62,7 @@ class DefaultHeader extends Component {
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
         <AppNavbarBrand
           full={{ src: logo, height: 45, alt: 'Logo' }}
-          minimized={{ src: sygnet, height: 40, alt: 'Mascot' }}
+          minimized={{ src: mascot, height: 40, alt: 'Mascot' }}
         />
         <AppSidebarToggler className="d-md-down-none" display="lg" />
 
@@ -139,6 +133,5 @@ class DefaultHeader extends Component {
 }
 
 DefaultHeader.propTypes = propTypes;
-DefaultHeader.defaultProps = defaultProps;
 
 export default DefaultHeader;

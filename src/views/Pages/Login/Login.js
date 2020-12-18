@@ -6,7 +6,7 @@ import axios from 'axios';
 import Spinner from 'react-spinkit';
 
 import bgImage from "assets/img/landing-bg.jpg";
-import logo from "assets/img/logo.svg";
+import logo from "assets/img/logo.png";
 
 class Login extends Component {
   constructor() {
@@ -68,7 +68,6 @@ class Login extends Component {
       .then(res => {
         if (res.data.success) {
           this.setState({ loader: false });
-          this.postHistory();
           this.props.history.push("/dashboard");
         } else {
           this.setState({ loader: false });
@@ -97,22 +96,6 @@ class Login extends Component {
       .catch(error => {
         console.log(error);
       });
-  }
-
-  postHistory = () => {
-    // INSERT HISTORY INTO DATABASE
-    var request = {
-      reference_id: this.state.nik,
-      user_id: this.state.nik,
-      step_id: "LOG1",
-      message: this.state.nik
-    }
-    axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-      .catch(error => {
-        alert(error);
-        console.log(error);
-      });
-    ////////////////////////////////////////////////////////////////
   }
 
   toggle = (id) => {
@@ -193,7 +176,7 @@ class Login extends Component {
                     </CardGroup>
                     <Card>
                       <CardFooter>
-                        <img src={logo} alt="Sidomo" style={{ height: "30px", position: "absolute", top: "10px" }} />
+                        <img src={logo} alt="Mini-Diarium" style={{ height: "30px", position: "absolute", top: "8px" }} />
                         <span className="float-right"><a href={"mailto:" + process.env.REACT_APP_EMAIL} target="_blank" rel="noopener noreferrer" className="text-danger">{process.env.REACT_APP_NAME}</a> &copy; {new Date().getFullYear()} {process.env.REACT_APP_ORGANIZATION}</span>
                       </CardFooter>
                     </Card>

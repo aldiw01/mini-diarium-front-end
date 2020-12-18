@@ -1,6 +1,6 @@
 {
-  "short_name": "Sidomo",
-  "name": "Sidomo - Sistem Informasi Dokumen Mutu Online",
+  "short_name": "Mini Diarium",
+  "name": "Mini Diarium - A Diarium wanna be!",
   "icons": [
     {
       "src": "./assets/img/favicon.png",

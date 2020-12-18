@@ -11,9 +11,6 @@ const propTypes = {
 };
 
 class AddCheckin extends Component {
-  constructor(props) {
-    super(props)
-  }
 
   render() {
 
@@ -23,8 +20,8 @@ class AddCheckin extends Component {
       <Modal isOpen={checkin} toggle={toggleCheckin} className={'modal-success modal-sm'}>
         <Form onSubmit={handleCheckin} method="post" encType="multipart/form-data" className="form-horizontal">
           <ModalHeader toggle={toggleCheckin}>Konfirmasi Checkin</ModalHeader>
-          <ModalBody className="mt-4 mx-4">
-            <p>Apakah mau checkin?</p>
+          <ModalBody>
+            Apakah mau checkin?
           </ModalBody>
           <ModalFooter>
             {loader ? <Spinner name='double-bounce' fadeIn="quarter" /> : ""}
