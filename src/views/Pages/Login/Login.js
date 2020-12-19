@@ -7,6 +7,7 @@ import Spinner from 'react-spinkit';
 
 import bgImage from "assets/img/landing-bg.jpg";
 import logo from "assets/img/logo.png";
+import mascot from "assets/img/mascot.png";
 
 class Login extends Component {
   constructor() {
@@ -124,7 +125,7 @@ class Login extends Component {
                       <Card className="p-4">
                         <CardBody>
                           <Form method="post" onSubmit={this.handleFormSubmit}>
-                            <h1>Login</h1>
+                            <h2 style={{textAlign:'left', verticalAlign:'bottom' }}><img src={mascot} alt="Mini-Diarium" style={{ height: "30px", verticalAlign : 'top' }} /> Login</h2>
                             <p className="text-muted">Sign In to your account</p>
 
                             <InputGroup className="mb-3">
