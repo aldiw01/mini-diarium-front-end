@@ -15,14 +15,14 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'Profile',
-      url: '/profile',
-      icon: 'icon-user'
-    },
-    {
       name: 'Log Activities',
       url: '/activities',
       icon: 'icon-cursor'
+    },
+    {
+      name: 'Profile',
+      url: '/profile',
+      icon: 'icon-user'
     }
   ]
 };
