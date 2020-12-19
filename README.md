@@ -1,6 +1,21 @@
 # mini-diarium - A Diarium wanna be!
 This project is under development, feel free to contact me for question.
 
+Application Environment:
+For Maria DB
+1. Phyton 2.7
+2. Microsof Visual Studio 2017
+3. .NET Framework 2.0
+4. Node JS Version 10.15.1 (Use nvm to select version)
+
+For Mongo DB
+1. Mongo DB
+
+Instruction:
+1. Make Sure all Application Environment Installed
+2. npm install
+3. npm start
+
 ## Installation
 
 ### clone the repo
