@@ -20,14 +20,14 @@ class AddCheckout extends Component {
     return (
       <Modal isOpen={checkout} toggle={toggleCheckout} className={'modal-danger modal-sm'}>
         <Form onSubmit={handleCheckout} method="post" encType="multipart/form-data" className="form-horizontal">
-          <ModalHeader toggle={toggleCheckout}>Konfirmasi checkout</ModalHeader>
+          <ModalHeader toggle={toggleCheckout}>Confirm Check Out</ModalHeader>
           <ModalBody>
-            Apakah mau checkout?
+            Do you want to check out?
           </ModalBody>
           <ModalFooter>
             {loader ? <Spinner name='double-bounce' fadeIn="quarter" /> : ""}
-            <Button color="danger" type="submit" >Ya</Button>{' '}
-            <Button color="secondary" onClick={toggleCheckout}>Tidak</Button>
+            <Button color="danger" type="submit" >Yes</Button>{' '}
+            <Button color="secondary" onClick={toggleCheckout}>No</Button>
           </ModalFooter>
         </Form>
       </Modal >

@@ -175,6 +175,7 @@ class Profile extends Component {
     event.preventDefault();
     if (window.confirm("You will change your profile picture. Are you sure?")) {
       this.setState({ loader: true });
+      console.log(this.state.profile_photo)
       const data = new FormData();
       data.append('profile_photo', this.state.profile_photo);
       axios.put(process.env.REACT_APP_API_PATH + '/users/photo/' + this.Auth.getProfile().id, data)

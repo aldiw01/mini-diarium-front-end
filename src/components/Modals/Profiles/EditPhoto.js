@@ -6,7 +6,7 @@ import Spinner from 'react-spinkit';
 const propTypes = {
   edit_photo: PropTypes.bool,
   handleChangeFile: PropTypes.func,
-  handleEdit: PropTypes.func,
+  handleEditPhoto: PropTypes.func,
   loader: PropTypes.bool,
   profile_photo: PropTypes.any,
   toggleEdit: PropTypes.func
@@ -16,11 +16,11 @@ class EditPhoto extends Component {
 
   render() {
 
-    const { edit_photo, handleChangeFile, handleEdit, loader, profile_photo, toggleEdit } = this.props;
+    const { edit_photo, handleChangeFile, handleEditPhoto, loader, profile_photo, toggleEdit } = this.props;
 
     return (
       <Modal isOpen={edit_photo} toggle={toggleEdit} className={'modal-danger'}>
-        <Form onSubmit={handleEdit} method="post" encType="multipart/form-data">
+        <Form onSubmit={handleEditPhoto} method="post" encType="multipart/form-data">
           <ModalHeader toggle={toggleEdit}>Choose Profile Photo</ModalHeader>
           <ModalBody className="modal-body-display">
             <Col xs="12" className="m-auto">

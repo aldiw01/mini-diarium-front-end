@@ -19,14 +19,14 @@ class AddCheckin extends Component {
     return (
       <Modal isOpen={checkin} toggle={toggleCheckin} className={'modal-success modal-sm'}>
         <Form onSubmit={handleCheckin} method="post" encType="multipart/form-data" className="form-horizontal">
-          <ModalHeader toggle={toggleCheckin}>Konfirmasi Checkin</ModalHeader>
+          <ModalHeader toggle={toggleCheckin}>Confirm Check In</ModalHeader>
           <ModalBody>
-            Apakah mau checkin?
+            Do you want to check in?
           </ModalBody>
           <ModalFooter>
             {loader ? <Spinner name='double-bounce' fadeIn="quarter" /> : ""}
-            <Button color="success" type="submit" >Ya</Button>{' '}
-            <Button color="secondary" onClick={toggleCheckin}>Tidak</Button>
+            <Button color="success" type="submit" >Yes</Button>{' '}
+            <Button color="secondary" onClick={toggleCheckin}>No</Button>
           </ModalFooter>
         </Form>
       </Modal>

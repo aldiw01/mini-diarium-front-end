@@ -22,7 +22,7 @@ class Home extends Component {
         </Row>
         <Row className="pt-3">
           <Col xs="12" xl="12">
-            <h3>You're not yet checked in today, wanna check?</h3>
+            <h3>You have not checked in today.</h3>
           </Col>
         </Row>
         <Row className="pt-3">

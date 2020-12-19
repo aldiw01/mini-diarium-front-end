@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Card, CardBody, Col, Row } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
+import { Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
 import Spinner from 'react-spinkit';
 import AuthService from 'server/AuthService';
@@ -23,6 +24,9 @@ class Dashboard extends Component {
     this.state = {
       checkin: false,
       checkout: false,
+      inProgress: '',
+      pending: '',
+      done: '',
       now: new Date().toString('en-GB'),
       presence: [{
         id: '',
@@ -31,6 +35,27 @@ class Dashboard extends Component {
         created: ''
       }]
     };
+    this.chartData = {
+      labels: [
+        'In Progress',
+        'Pending',
+        'Done',
+      ],
+      datasets: [
+        {
+          data: [0, 0, 0],
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+          ],
+          hoverBackgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+          ],
+        }],
+    };
   }
 
   componentDidMount() {
@@ -38,6 +63,7 @@ class Dashboard extends Component {
       this.setState({
         now: new Date().toString('en-GB')
       })
+      this.getChart()
     }, 1000)
 
     this.getData();
@@ -53,6 +79,43 @@ class Dashboard extends Component {
     axios.get(process.env.REACT_APP_API_PATH + '/presence/user/' + this.Auth.getProfile().id + '/' + tanggal)
       .then(res => {
         this.setState({ presence: res.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    this.getChart();
+  }
+
+  getChart = () => {
+    axios.get(`${process.env.REACT_APP_API_PATH}/activity/user/${this.Auth.getProfile().id}`)
+      .then(res => {
+        this.setState({
+          inProgress: res.data.filter(item => item.status === '1').length,
+          pending: res.data.filter(item => item.status === '2').length,
+          done: res.data.filter(item => item.status === '3').length,
+        });
+        this.chartData = {
+          labels: [
+            'In Progress',
+            'Pending',
+            'Done',
+          ],
+          datasets: [
+            {
+              data: [this.state.inProgress, this.state.pending, this.state.done],
+              backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+              ],
+              hoverBackgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+              ],
+            }],
+        };
       })
       .catch(error => {
         console.log(error);
@@ -78,7 +141,6 @@ class Dashboard extends Component {
           checkin: false
         });
         this.getData();
-        // alert(res.data.message);
       })
       .catch(error => {
         alert(error);
@@ -88,27 +150,24 @@ class Dashboard extends Component {
 
   handleCheckout = (event) => {
     event.preventDefault();
-    if (window.confirm("You will create change(s) on database. Are you sure?")) {
-      this.setState({ loader: true });
-      var data = {
-        user_id: this.Auth.getProfile().id,
-        status: 2, // checkout 2
-      }
-
-      axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
-        .then(res => {
-          this.setState({
-            checkout: false,
-            finish: true,
-          });
-          this.getData();
-          // alert(res.data.message);
-        })
-        .catch(error => {
-          alert(error);
-          console.log(error);
-        });
+    this.setState({ loader: true });
+    var data = {
+      user_id: this.Auth.getProfile().id,
+      status: 2, // checkout 2
     }
+
+    axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
+      .then(res => {
+        this.setState({
+          checkout: false,
+          finish: true,
+        });
+        this.getData();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
   }
 
   toggleCheckin = () => {
@@ -124,6 +183,7 @@ class Dashboard extends Component {
   }
 
   render() {
+
 
     return (
       <div className="animated fadeIn">
@@ -182,7 +242,19 @@ class Dashboard extends Component {
         </Row>
 
         <Row className={this.state.presence[0].status === '' ? "d-none" : ""}>
-          <Col xs="12" xl="12">
+          <Col xs="12" xl="4">
+            <Card>
+              <CardHeader>
+                Doughnut Chart
+            </CardHeader>
+              <CardBody>
+                <div className="chart-wrapper">
+                  <Doughnut data={this.chartData} />
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+          <Col xs="12" xl="8">
             <Activities
               path={this.props.match.path}
             />

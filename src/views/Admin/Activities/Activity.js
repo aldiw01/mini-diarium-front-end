@@ -100,44 +100,39 @@ class Activity extends Component {
 
   handleEdit = (event) => {
     event.preventDefault();
-    if (window.confirm("You will create change(s) on database. Are you sure?")) {
-      this.setState({ loader: true });
-      var request = {
-        name: this.state.focus.name,
-        status: this.state.focus.status.substr(-1)
-      }
-      axios.put(process.env.REACT_APP_API_PATH + '/activity/' + this.state.data[this.state.id].id, request)
-        .then(res => {
-          this.setState({
-            EditActivity: !this.state.EditActivity,
-            loader: false
-          })
-          this.getData();
-        })
-        .catch(error => {
-          alert(error);
-          console.log(error);
-        });
+    this.setState({ loader: true });
+    var request = {
+      name: this.state.focus.name,
+      status: this.state.focus.status.substr(-1)
     }
+    axios.put(process.env.REACT_APP_API_PATH + '/activity/' + this.state.data[this.state.id].id, request)
+      .then(res => {
+        this.setState({
+          EditActivity: !this.state.EditActivity,
+          loader: false
+        })
+        this.getData();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
   }
 
   handleDelete = (id) => {
-    if (window.confirm("You will create delete(s) on database with id = " + id + ", Are you sure?")) {
-      this.setState({ loader: true });
-      axios.delete(process.env.REACT_APP_API_PATH + '/activity/ever/' + id)
-        .then(res => {
-          this.getData();
-          this.setState({
-            DeleteActivity: !this.state.DeleteActivity,
-            loader: false
-          })
-          alert(res.data.message);
+    this.setState({ loader: true });
+    axios.delete(process.env.REACT_APP_API_PATH + '/activity/ever/' + id)
+      .then(res => {
+        this.getData();
+        this.setState({
+          DeleteActivity: !this.state.DeleteActivity,
+          loader: false
         })
-        .catch(error => {
-          alert("aduh eror /activity/ever/" + id + "-" + error);
-          console.log(error);
-        });
-    }
+      })
+      .catch(error => {
+        alert("aduh eror /activity/ever/" + id + "-" + error);
+        console.log(error);
+      });
   }
 
   handleAddActivity = (event) => {
@@ -151,15 +146,9 @@ class Activity extends Component {
     axios.post(process.env.REACT_APP_API_PATH + '/activity', req)
       .then(res => {
         this.setState({
-          message: res.data.message,
-          AddActivity: !this.state.AddActivity,
-          loader: false,
-        });
-        this.getData();
-        alert(res.data.message);
-        this.setState({
           loader: false,
           AddActivity: false,
+          message: res.data.message,
           listActivity: '',
           status: '1',
           toggle: false,
@@ -172,6 +161,7 @@ class Activity extends Component {
             updated: ''
           }],
         })
+        this.getData();
       })
       .catch(error => {
         console.log(error);

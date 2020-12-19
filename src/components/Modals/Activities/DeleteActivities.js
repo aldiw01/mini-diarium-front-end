@@ -19,9 +19,9 @@ class DeleteActivities extends Component {
 
     return (
       <Modal isOpen={_delete} toggle={() => toggleDelete(id)} className={'modal-danger modal-sm'}>
-        <ModalHeader toggle={() => toggleDelete(id)}>Delete Aktivitas</ModalHeader>
+        <ModalHeader toggle={() => toggleDelete(id)}>Delete Activity</ModalHeader>
         <ModalBody>
-          Yakin Hapus Aktivitas <strong>{id + 1 + '. ' + data.name}?</strong>
+          Are you sure to Delete <strong>{id + 1 + '. ' + data.name}?</strong>
         </ModalBody>
         <ModalFooter>
           {loader ? <Spinner name='double-bounce' fadeIn="quarter" /> : ""}

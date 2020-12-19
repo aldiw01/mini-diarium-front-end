@@ -52,23 +52,21 @@ class EditActivities extends Component {
     })
 
     return (
-      <Modal isOpen={edit} toggle={() => toggleEdit(id)} className={'modal-primary modal-lg'}>
+      <Modal isOpen={edit} toggle={() => toggleEdit(id)} className={'modal-primary'}>
         <Form onSubmit={handleEdit} method="post" encType="multipart/form-data" className="form-horizontal">
           <ModalHeader toggle={() => toggleEdit(id)}>Update Activity</ModalHeader>
 
-          <ModalBody className="mt-4 mx-4">
+          <ModalBody>
             <FormGroup row>
               <Col md="12" className="m-auto">
-                <Label htmlFor="hf-text"><strong>Merubah Nama Aktivitas Hari ini </strong></Label>
+                <Label htmlFor="hf-text">Update activity name</Label>
               </Col>
 
-              <div className="w-100 py-2"></div>
-
-              <Col md="2" className="m-auto">
+              {/* <Col md="2" className="m-auto">
                 <Label htmlFor="hf-text">Aktivitas</Label>
-              </Col>
-              <Col xs="12" md="10">
-                <Input type="text" onChange={handleChange} name="name" value={data.name} required />
+              </Col> */}
+              <Col xs="12" md="12">
+                <Input type="textarea" onChange={handleChange} name="name" value={data.name} required />
               </Col>
 
               <div className="w-100 py-2"></div>
@@ -79,7 +77,7 @@ class EditActivities extends Component {
               <Col xs="12" md="10">
                 <ButtonDropdown isOpen={this.state.dropdown} toggle={this.toggle} name="dropdown" className="w-100">
                   <DropdownToggle className="text-left">
-                    {progress[0] ? progress[0].name : "Pilih Status"}
+                    {progress[0] ? progress[0].name : "Choose Status"}
                   </DropdownToggle>
                   <DropdownMenu style={{ width: "100%", overflow: "auto" }}>
                     {this.state.data.map((item, i) =>
@@ -93,8 +91,8 @@ class EditActivities extends Component {
 
           <ModalFooter>
             {loader ? <Spinner name='double-bounce' fadeIn="quarter" className="ml-auto" /> : ""}
-            <Button color="primary" disabled={loader}>Ubah</Button>{' '}
-            <Button color="secondary" onClick={() => toggleEdit(id)}>Batal</Button>
+            <Button color="primary" disabled={loader}>Update</Button>{' '}
+            <Button color="secondary" onClick={() => toggleEdit(id)}>Cancel</Button>
           </ModalFooter>
         </Form>
       </Modal >
