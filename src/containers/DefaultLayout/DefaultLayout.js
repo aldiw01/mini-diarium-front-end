@@ -20,12 +20,6 @@ import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
 
-const defaultProps = {
-  ACCESS_ROLES_PAGE: [
-    "1", "2A1", "2A2", "2B", "2C"
-  ]
-};
-
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
@@ -43,19 +37,6 @@ class DefaultLayout extends Component {
 
   signOut(e) {
     e.preventDefault()
-    // INSERT HISTORY INTO DATABASE
-    var request = {
-      reference_id: this.Auth.getProfile().id,
-      user_id: this.Auth.getProfile().id,
-      step_id: "LOG2",
-      message: this.Auth.getProfile().id
-    }
-    axios.post(process.env.REACT_APP_API_PATH + '/history', request)
-      .catch(error => {
-        alert(error);
-        console.log(error);
-      });
-    ////////////////////////////////////////////////////////////////
     this.Auth.logout();
     this.props.history.push('/login');
   }
@@ -109,7 +90,5 @@ class DefaultLayout extends Component {
     );
   }
 }
-
-DefaultLayout.defaultProps = defaultProps;
 
 export default DefaultLayout;

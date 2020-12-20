@@ -11,7 +11,6 @@ const propTypes = {
   handleEdit: PropTypes.func,
   id: PropTypes.number,
   loader: PropTypes.bool,
-  standard_level: PropTypes.string,
   toggleEdit: PropTypes.func
 };
 

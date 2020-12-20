@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Badge, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
+import { DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 
 import { AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
@@ -38,18 +38,6 @@ class DefaultHeader extends Component {
       });
   }
 
-  componentDidMount() {
-    axios.get(process.env.REACT_APP_API_PATH + '/requests/notification/' + this.Auth.getProfile().id + '/' + this.Auth.getProfile().role)
-      .then(res => {
-        this.setState({
-          notification: res.data,
-        })
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
   render() {
 
     // eslint-disable-next-line
@@ -77,35 +65,11 @@ class DefaultHeader extends Component {
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
               <i className="icon-bell"></i>
-              {parseInt(this.state.notification.total) + parseInt(this.state.notification.myRequests) > 0 ?
-                <Badge pill color="danger">{parseInt(this.state.notification.total) + parseInt(this.state.notification.myRequests)}</Badge>
-                : ""
-              }
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center">
                 <strong>Notifications</strong>
               </DropdownItem>
-              {/* <Link to="/requests">
-                <DropdownItem><i className="icon-plus"></i> Add
-                <Badge color="success">{this.state.notification.add}</Badge>
-                </DropdownItem>
-              </Link>
-              <Link to="/requests">
-                <DropdownItem><i className="icon-pencil"></i> Edit
-                <Badge color="warning">{this.state.notification.edit}</Badge>
-                </DropdownItem>
-              </Link>
-              <Link to="/requests">
-                <DropdownItem><i className="icon-close"></i> Delete
-                <Badge color="danger">{this.state.notification.delete}</Badge>
-                </DropdownItem>
-              </Link>
-              <Link to="/requests">
-                <DropdownItem><i className="icon-speech"></i> My Requests
-                <Badge color="primary">{this.state.notification.myRequests}</Badge>
-                </DropdownItem>
-              </Link> */}
             </DropdownMenu>
           </AppHeaderDropdown>
 

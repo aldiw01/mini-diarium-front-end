@@ -136,7 +136,6 @@ class Register extends Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
-      role: this.state.role
     }
     axios.post(process.env.REACT_APP_API_PATH + '/users', data)
       .then(res => {

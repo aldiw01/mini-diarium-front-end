@@ -25,7 +25,6 @@ class Profile extends Component {
       data: [{
         NIK: '',
         Name: '',
-        Role: '',
         Email: '',
         Registered: '',
         Updated: ''
@@ -33,7 +32,6 @@ class Profile extends Component {
       focus: {
         NIK: '',
         Name: '',
-        Role: '',
         Email: '',
         Registered: '',
         Updated: ''
