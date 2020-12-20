@@ -23,7 +23,7 @@ class CheckIn extends Component {
         </Row>
         <Row className="pt-3">
           <Col xs="12" xl="12">
-            <h3>You Have Checked In Today, at</h3>
+            <h3>You have checked in today, at</h3>
           </Col>
         </Row>
         <Row className="pt-3">
