@@ -65,6 +65,16 @@ class Activity extends Component {
           this.setState({ data: res.data });
         })
         .catch(error => {
+          this.setState({
+            data: [{
+              id: '',
+              user_id: '',
+              name: '',
+              status: '',
+              created: '',
+              updated: ''
+            }]
+          });
           console.log(error);
         });
     } else {
@@ -73,6 +83,16 @@ class Activity extends Component {
           this.setState({ data: res.data });
         })
         .catch(error => {
+          this.setState({
+            data: [{
+              id: '',
+              user_id: '',
+              name: '',
+              status: '',
+              created: '',
+              updated: ''
+            }]
+          });
           console.log(error);
         });
     }

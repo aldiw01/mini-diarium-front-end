@@ -138,7 +138,8 @@ class Dashboard extends Component {
     axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
       .then(res => {
         this.setState({
-          checkin: false
+          checkin: false,
+          loader: false
         });
         this.getData();
       })
@@ -161,6 +162,7 @@ class Dashboard extends Component {
         this.setState({
           checkout: false,
           finish: true,
+          loader: false
         });
         this.getData();
       })
