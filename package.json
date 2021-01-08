@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/aldiw01/mini-diarium-front-end.git"
   },
+  "engines": {
+    "node": "10.15.1"
+  },
   "dependencies": {
     "@coreui/coreui": "~2.1.9",
     "@coreui/coreui-plugin-chartjs-custom-tooltips": "~1.2.0",
