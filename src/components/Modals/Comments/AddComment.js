@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Form } from 'reactstrap';
-import Spinner from 'react-spinkit';
+import { Button, Modal, ModalBody, ModalHeader, Form } from 'reactstrap';
 
 const propTypes = {
   comment: PropTypes.bool,
@@ -14,7 +13,7 @@ class AddComment extends Component {
 
   render() {
 
-    const { comment, handleComment, loader, toggleComment } = this.props;
+    const { comment, toggleComment } = this.props;
 
     return (
       <Modal isOpen={comment} toggle={toggleComment} className={'modal-danger modal-lg'}>

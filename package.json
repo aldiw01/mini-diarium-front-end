@@ -19,6 +19,7 @@
     "classnames": "~2.2.6",
     "core-js": "~2.6.5",
     "dotenv": "~8.0.0",
+    "emoji-mart": "^3.0.0",
     "enzyme": "~3.9.0",
     "enzyme-adapter-react-16": "~1.11.2",
     "flag-icon-css": "~3.3.0",

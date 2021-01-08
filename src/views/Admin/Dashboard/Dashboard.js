@@ -69,7 +69,7 @@ class Dashboard extends Component {
       this.setState({
         now: new Date().toString('en-GB')
       })
-      this.getChart()
+      this.getChart();
     }, 1000)
 
     this.getData();
@@ -96,32 +96,34 @@ class Dashboard extends Component {
   getChart = () => {
     axios.get(`${process.env.REACT_APP_API_PATH}/activity/user/${this.Auth.getProfile().id}`)
       .then(res => {
-        this.setState({
-          inProgress: res.data.filter(item => item.status === '1').length,
-          pending: res.data.filter(item => item.status === '2').length,
-          done: res.data.filter(item => item.status === '3').length,
-        });
-        this.chartData = {
-          labels: [
-            'In Progress',
-            'Pending',
-            'Done',
-          ],
-          datasets: [
-            {
-              data: [this.state.inProgress, this.state.pending, this.state.done],
-              backgroundColor: [
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56',
-              ],
-              hoverBackgroundColor: [
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56',
-              ],
-            }],
-        };
+        if (res.data.length > 0) {
+          this.setState({
+            inProgress: res.data.filter(item => item.status === '1').length,
+            pending: res.data.filter(item => item.status === '2').length,
+            done: res.data.filter(item => item.status === '3').length,
+          });
+          this.chartData = {
+            labels: [
+              'In Progress',
+              'Pending',
+              'Done',
+            ],
+            datasets: [
+              {
+                data: [this.state.inProgress, this.state.pending, this.state.done],
+                backgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                  '#FFCE56',
+                ],
+                hoverBackgroundColor: [
+                  '#FF6384',
+                  '#36A2EB',
+                  '#FFCE56',
+                ],
+              }],
+          };
+        }
       })
       .catch(error => {
         console.log(error);

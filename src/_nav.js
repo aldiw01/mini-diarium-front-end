@@ -20,14 +20,14 @@ export default {
       icon: 'icon-cursor'
     },
     {
+      name: 'Curhat',
+      url: '/curhat',
+      icon: 'icon-bubbles'
+    },
+    {
       name: 'Profile',
       url: '/profile',
       icon: 'icon-user'
-    },
-    {
-      name: 'Curhat',
-      url: '/curhat',
-      icon: 'icon-bubble'
     }
   ]
 };

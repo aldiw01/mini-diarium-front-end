@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardHeader, Col, ListGroup, ListGroupItem, ListGroupItemText, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -12,11 +13,20 @@ class Headlines extends Component {
 
     const { profile } = this.props;
 
+    const addButton = {
+      position: "absolute",
+      right: "20px",
+      top: "5px",
+    }
+
     return (
       <React.Fragment>
         <Card>
           <CardHeader className="bg-danger">
             <i className="fa fa-star"></i><strong>Curhat Headlines</strong>
+            <Link to="/curhat">
+              <Button color="dark" style={addButton} active tabIndex={-1}>Post Curhat <i className="icon-paper-plane" /></Button>
+            </Link>
           </CardHeader>
           <CardBody>
             <ListGroup>
@@ -38,8 +48,8 @@ class Headlines extends Component {
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="fa fa-thumbs-o-up" /> 77 Like</Button>
-                <Button className="btn ml-2"><i className="fa fa-comment-o" /> 21 Reply</Button>
+                <Button className="btn"><i className="icon-like" /> 77 Like</Button>
+                <Button className="btn ml-2"><i className="icon-bubble" /> 21 Reply</Button>
               </ListGroupItem>
 
               <strong className="pt-2">Top by your directorate</strong>
@@ -59,8 +69,8 @@ class Headlines extends Component {
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="fa fa-thumbs-o-up" /> 67 Like</Button>
-                <Button className="btn ml-2"><i className="fa fa-comment-o" /> 13 Reply</Button>
+                <Button className="btn"><i className="icon-like" /> 67 Like</Button>
+                <Button className="btn ml-2"><i className="icon-bubble" /> 13 Reply</Button>
               </ListGroupItem>
 
               <strong className="pt-2">Latest</strong>
@@ -80,8 +90,8 @@ class Headlines extends Component {
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="fa fa-thumbs-o-up" /> 0 Like</Button>
-                <Button className="btn ml-2"><i className="fa fa-comment-o" /> 0 Reply</Button>
+                <Button className="btn"><i className="icon-like" /> 0 Like</Button>
+                <Button className="btn ml-2"><i className="icon-bubble" /> 0 Reply</Button>
               </ListGroupItem>
 
             </ListGroup>
