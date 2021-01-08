@@ -26,6 +26,7 @@ class Profile extends Component {
         NIK: '',
         Name: '',
         Email: '',
+        Directorate: '',
         Registered: '',
         Updated: ''
       }],
@@ -33,6 +34,7 @@ class Profile extends Component {
         NIK: '',
         Name: '',
         Email: '',
+        Directorate: '',
         Registered: '',
         Updated: ''
       },
@@ -57,6 +59,7 @@ class Profile extends Component {
             NIK: res.data[0].id,
             Name: res.data[0].name,
             Email: res.data[0].email,
+            Directorate: res.data[0].directorate,
             Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
             Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
           }]
@@ -199,7 +202,8 @@ class Profile extends Component {
       this.setState({ loader: true });
       var request = {
         name: this.state.focus.Name,
-        email: this.state.focus.Email
+        email: this.state.focus.Email,
+        directorate: this.state.focus.Directorate
       }
       axios.put(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id, request)
         .then(res => {

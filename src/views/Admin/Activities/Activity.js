@@ -161,7 +161,7 @@ class Activity extends Component {
     const req = {
       user_id: this.Auth.getProfile().id,
       name: this.state.listActivity,
-      status: this.state.status
+      // status: this.state.status
     };
     axios.post(process.env.REACT_APP_API_PATH + '/activity', req)
       .then(res => {

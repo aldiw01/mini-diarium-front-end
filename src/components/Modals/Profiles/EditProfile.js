@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Form, FormGroup, Input } from 'reactstrap';
+import { Button, ButtonDropdown, Col, DropdownItem, DropdownMenu, DropdownToggle, Modal, ModalBody, ModalFooter, ModalHeader, Form, FormGroup, Input } from 'reactstrap';
 import Spinner from 'react-spinkit';
 
 const propTypes = {
@@ -13,6 +13,27 @@ const propTypes = {
 };
 
 class EditProfile extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      dropdown: false,
+      data: [{
+        name: 'Consumer'
+      },
+      {
+        name: 'Digital Business'
+      },
+      {
+        name: 'Mobile'
+      }]
+    }
+  }
+
+  toggle = () => {
+    this.setState({
+      dropdown: !this.state.dropdown
+    });
+  }
 
   render() {
 
@@ -39,6 +60,24 @@ class EditProfile extends Component {
               </Col>
               <Col xs="12" md="9">
                 <Input type="email" onChange={handleChange} name="Email" value={data.Email} required />
+              </Col>
+            </FormGroup>
+
+            <FormGroup row>
+              <Col md="3">
+                Directorate *
+              </Col>
+              <Col xs="12" md="9">
+                <ButtonDropdown isOpen={this.state.dropdown} toggle={this.toggle} name="dropdown" className="w-100">
+                  <DropdownToggle className="text-left">
+                    {data.Directorate ? data.Directorate : "Select Directorate"}
+                  </DropdownToggle>
+                  <DropdownMenu style={{ width: "100%", overflow: "auto" }}>
+                    {this.state.data.map((item, i) =>
+                      <DropdownItem key={i} onClick={handleChange} name="Directorate" value={item.name} >{item.name}</DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </ButtonDropdown>
               </Col>
             </FormGroup>
 

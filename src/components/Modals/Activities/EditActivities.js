@@ -46,7 +46,6 @@ class EditActivities extends Component {
     const { edit, data, handleChange, handleEdit, id, loader, toggleEdit } = this.props;
 
     var progress = this.state.data.filter((item, i) => {
-
       return data.status === item.id
     })
 

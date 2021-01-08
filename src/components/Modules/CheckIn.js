@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Col, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 const propTypes = {
   data: PropTypes.array,
@@ -28,7 +29,7 @@ class CheckIn extends Component {
         </Row>
         <Row className="pt-3">
           <Col xs="12" xl="12">
-            {new Date(data[0].created).toLocaleString()}
+            {moment(data[0].created).format("LLL")}
           </Col>
         </Row>
         <Row className="pt-3">

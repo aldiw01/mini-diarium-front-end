@@ -11,6 +11,7 @@ import AddCheckout from 'components/Modals/Presence/AddCheckout';
 import Home from 'components/Modules/Home';
 import CheckIn from 'components/Modules/CheckIn';
 import CheckOut from 'components/Modules/CheckOut';
+import Headlines from 'components/Modules/Headlines';
 
 import Activities from 'views/Admin/Activities';
 
@@ -33,7 +34,12 @@ class Dashboard extends Component {
         user_id: '',
         status: '',
         created: ''
-      }]
+      }],
+      profile: {
+        name: "Aldi Wiranata",
+        directorate: "Direktorat Digital Business",
+        photo: "profile_photo_970037.png"
+      }
     };
     this.chartData = {
       labels: [
@@ -191,7 +197,7 @@ class Dashboard extends Component {
       <div className="animated fadeIn">
 
         <Row>
-          <Col xs="12" xl="12">
+          <Col xs="12" className={this.state.presence[0].status === '' ? "col-xl-12" : "col-xl-8"}>
             <Card className="text-white bg-dark">
               <CardBody className="text-center">
                 {this.state.presence[0].status === '1' ?
@@ -240,14 +246,37 @@ class Dashboard extends Component {
                 />
               </CardBody>
             </Card>
+
+            <div className={this.state.presence[0].status === '' ? "d-none" : ""}>
+              <Activities
+                path={this.props.match.path}
+              />
+            </div>
+          </Col>
+
+          <Col xs="12" xl="4" className={this.state.presence[0].status === '' ? "d-none" : "pl-0"}>
+            <Card>
+              <CardHeader>
+                <strong>Activities Chart </strong>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-wrapper">
+                  <Doughnut data={this.chartData} />
+                </div>
+              </CardBody>
+            </Card>
+
+            <Headlines
+              profile={this.state.profile}
+            />
           </Col>
         </Row>
 
-        <Row className={this.state.presence[0].status === '' ? "d-none" : ""}>
+        {/* <Row className={this.state.presence[0].status === '' ? "d-none" : ""}>
           <Col xs="12" xl="4">
             <Card>
               <CardHeader>
-                Doughnut Chart
+                Activities Chart
             </CardHeader>
               <CardBody>
                 <div className="chart-wrapper">
@@ -261,8 +290,20 @@ class Dashboard extends Component {
               path={this.props.match.path}
             />
           </Col>
-        </Row>
+        </Row> */}
 
+        {/* <Row>
+          <Col xs="12" xl="6" className="pr-1">
+            <Headlines
+              profile={this.state.profile}
+            />
+          </Col>
+          <Col xs="12" xl="6" className="pl-1">
+            <Headlines
+              profile={this.state.profile}
+            />
+          </Col>
+        </Row> */}
       </div>
     );
   }

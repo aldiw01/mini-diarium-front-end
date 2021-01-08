@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Alert, Button, Card, CardBody, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { Alert, Button, ButtonDropdown, Card, CardBody, CardFooter, Col, Container, DropdownItem, DropdownMenu, DropdownToggle, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import axios from 'axios';
 import AuthService from '../../../server/AuthService';
 import Spinner from 'react-spinkit';
@@ -17,9 +17,15 @@ class Register extends Component {
       badge: 'info',
       badgeVisible: false,
       data: [{
-        id: '',
-        name: ''
+        name: 'Consumer'
+      },
+      {
+        name: 'Digital Business'
+      },
+      {
+        name: 'Mobile'
       }],
+      directorate: "",
       dropdown: false,
       email: '',
       isEmailClicked: false,
@@ -27,6 +33,7 @@ class Register extends Component {
       isGoodName: false,
       isGoodNIK: false,
       isGoodPassword: false,
+      isGoodDirectorate: false,
       isLoggedin: false,
       isNameClicked: false,
       isNIKClicked: false,
@@ -136,6 +143,7 @@ class Register extends Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
+      directorate: this.state.directorate,
     }
     axios.post(process.env.REACT_APP_API_PATH + '/users', data)
       .then(res => {
@@ -271,11 +279,32 @@ class Register extends Component {
                             </InputGroupAddon>
                           </InputGroup>
 
-                          <Button color="danger" block type="submit" disabled={!this.state.isGoodName || !this.state.isGoodPassword || this.state.isRegisteredNIK || !this.state.isPasswordConfirmed || this.state.loader} >
+                          <InputGroup className="mb-3">
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="icon-organization"></i>
+                              </InputGroupText>
+                            </InputGroupAddon>
+
+                            <ButtonDropdown isOpen={this.state.dropdown} toggle={this.toggle} style={{ flex: "auto" }}>
+                              <DropdownToggle className="text-left">
+                                {this.state.directorate ? this.state.directorate : "Select Directorate"}
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                {this.state.data.map((item, i) =>
+                                  <DropdownItem key={i} onClick={() => this.setState({ directorate: item.name, isGoodDirectorate: true })}>
+                                    {item.name}
+                                  </DropdownItem>
+                                )}
+                              </DropdownMenu>
+                            </ButtonDropdown>
+                          </InputGroup>
+
+                          <Button color="danger" block type="submit" disabled={!this.state.isGoodName || !this.state.isGoodPassword || !this.state.isGoodDirectorate || this.state.isRegisteredNIK || !this.state.isPasswordConfirmed || this.state.loader} >
                             {this.state.loader ? <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" /> : "Create Account"}
                           </Button>
                           <Link to="/login">
-                            <Button color="primary" className="w-100 mt-4" active tabIndex={-1}>Login</Button>
+                            <Button color="primary" className="w-100 mt-4" active tabIndex={-1}>Go to Login</Button>
                           </Link>
                         </Form>
                       </CardBody>
