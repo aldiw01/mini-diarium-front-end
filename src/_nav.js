@@ -23,6 +23,11 @@ export default {
       name: 'Profile',
       url: '/profile',
       icon: 'icon-user'
+    },
+    {
+      name: 'Curhat',
+      url: '/curhat',
+      icon: 'icon-bubble'
     }
   ]
 };
