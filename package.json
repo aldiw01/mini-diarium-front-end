@@ -8,9 +8,6 @@
     "type": "git",
     "url": "https://github.com/aldiw01/mini-diarium-front-end.git"
   },
-  "engines": {
-    "node": "10.15.1"
-  },
   "dependencies": {
     "@coreui/coreui": "~2.1.9",
     "@coreui/coreui-plugin-chartjs-custom-tooltips": "~1.2.0",
@@ -29,7 +26,6 @@
     "jwt-decode": "~2.2.0",
     "mdbreact": "~4.27.0",
     "moment": "^2.29.1",
-    "node-sass": "~4.11.0",
     "prop-types": "~15.7.2",
     "react": "~16.8.5",
     "react-app-polyfill": "~0.2.2",
@@ -39,8 +35,6 @@
     "react-router-dom": "~4.3.1",
     "react-spinkit": "^3.0.0",
     "react-step-progress-bar": "^1.0.3",
-    "react-swipeable-views": "~0.13.3",
-    "react-test-renderer": "~16.8.5",
     "reactstrap": "~7.1.0",
     "simple-line-icons": "^2.5.5"
   },

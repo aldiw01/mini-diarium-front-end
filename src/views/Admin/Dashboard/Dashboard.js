@@ -270,40 +270,8 @@ class Dashboard extends Component {
               profile={this.state.profile}
             />
           </Col>
+
         </Row>
-
-        {/* <Row className={this.state.presence[0].status === '' ? "d-none" : ""}>
-          <Col xs="12" xl="4">
-            <Card>
-              <CardHeader>
-                Activities Chart
-            </CardHeader>
-              <CardBody>
-                <div className="chart-wrapper">
-                  <Doughnut data={this.chartData} />
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col xs="12" xl="8">
-            <Activities
-              path={this.props.match.path}
-            />
-          </Col>
-        </Row> */}
-
-        {/* <Row>
-          <Col xs="12" xl="6" className="pr-1">
-            <Headlines
-              profile={this.state.profile}
-            />
-          </Col>
-          <Col xs="12" xl="6" className="pl-1">
-            <Headlines
-              profile={this.state.profile}
-            />
-          </Col>
-        </Row> */}
       </div>
     );
   }

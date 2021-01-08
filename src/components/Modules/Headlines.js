@@ -5,13 +5,12 @@ import moment from 'moment';
 
 const propTypes = {
   profile: PropTypes.object,
-  title: PropTypes.string,
 };
 
 class Headlines extends Component {
   render() {
 
-    const { profile, title } = this.props;
+    const { profile } = this.props;
 
     return (
       <React.Fragment>
