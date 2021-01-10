@@ -110,7 +110,6 @@ class Curhat extends Component {
         }
         const user = this.Auth.getProfile().name;
         const photo_url = this.state.photo ? this.state.photo : "test.jpg"
-        const divisi =this.state.data.Directorate;
 
         return (
             <div className="animated fadeIn">
