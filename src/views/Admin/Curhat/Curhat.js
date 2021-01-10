@@ -3,10 +3,9 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Col, DropdownMenu, Drop
 import { AppHeaderDropdown } from '@coreui/react';
 import AuthService from 'server/AuthService';
 import axios from 'axios';
-import 'emoji-mart/css/emoji-mart.css';
 import { Picker } from 'emoji-mart';
 
-import AddComment from 'components/Modals/Comments/AddComment';
+// import AddComment from 'components/Modals/Comments/AddComment';
 
 class Curhat extends Component {
 
@@ -22,7 +21,7 @@ class Curhat extends Component {
             myComment: '',
             myPost: '',
             photo: '',
-            data:'',
+            data: '',
             dataLatest: [
                 {
                     id: '3',
@@ -74,23 +73,23 @@ class Curhat extends Component {
 
     getData = () => {
         axios.get(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id)
-          .then(res => {
-            this.setState({
-              photo: res.data[0].photo,
-              data: [{
-                NIK: res.data[0].id,
-                Name: res.data[0].name,
-                Email: res.data[0].email,
-                Directorate: res.data[0].directorate,
-                Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
-                Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
-              }]
+            .then(res => {
+                this.setState({
+                    photo: res.data[0].photo,
+                    data: [{
+                        NIK: res.data[0].id,
+                        Name: res.data[0].name,
+                        Email: res.data[0].email,
+                        Directorate: res.data[0].directorate,
+                        Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
+                        Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
+                    }]
+                })
             })
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      }
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
@@ -118,22 +117,19 @@ class Curhat extends Component {
 
                     <Col xs="12" xl="12">
                         <Card>
-                            <CardHeader className="p-2">
-                            <i className="fa fa-heart"></i><strong>Curahkan Isi Hatimu Disini</strong>
-                            </CardHeader>
                             <CardBody className="p-2">
                                 <div className="media">
                                     <img style={{ borderRadius: "40%" }} src={process.env.REACT_APP_API_PATH + '/uploads/users/' + photo_url} className="mr-3" alt="..."></img>
                                     <div className="media-body">
                                         <h2>{user}</h2>
-                                        <Input type="textarea" onChange={this.handleChange} placeholder={"Apa yang anda pikirkan " + user + " ?"}  name="myPost" value={this.state.myPost} required />
+                                        <Input type="textarea" onChange={this.handleChange} placeholder={"Apa yang anda pikirkan " + user + " ?"} name="myPost" value={this.state.myPost} required />
                                     </div>
                                 </div>
                             </CardBody>
                             <CardFooter className="py-1 card-accent-danger">
                                 <div style={addButton}>
-                                    <Button color="light" className="btn float-right">
-                                        <i className="icon-paper-plane"> Post</i>
+                                    <Button color={this.state.myPost ? "danger" : "light"} disabled={this.state.myPost ? false : true} className="btn float-right">
+                                        <i className="icon-paper-plane"></i>
                                     </Button>
                                     <Nav className="mt-n2 float-right" navbar>
                                         <AppHeaderDropdown direction="down">
@@ -143,7 +139,7 @@ class Curhat extends Component {
                                                 </Button>
                                             </DropdownToggle>
                                             <DropdownMenu right style={{ right: 'auto' }}>
-                                                <Picker native color="#f86c6b" theme="dark" title="Choose emoji" emoji="smile" onSelect={(emoji) => { this.setState({ myPost: this.state.myPost + emoji.native }) }} />
+                                                <Picker native color="#f86c6b" theme="dark" title="Choose emoji" emoji="wink" onSelect={(emoji) => { this.setState({ myPost: this.state.myPost + emoji.native }) }} />
                                             </DropdownMenu>
                                         </AppHeaderDropdown>
                                     </Nav>
@@ -260,11 +256,11 @@ class Curhat extends Component {
 
                 </Row>
 
-                <AddComment
+                {/* <AddComment
                     comment={this.state.comment}
                     loader={this.state.loader}
                     toggleComment={this.toggleCheckin}
-                />
+                /> */}
 
             </div>
         );

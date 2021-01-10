@@ -116,6 +116,11 @@ class Login extends Component {
                                 {this.state.loader ? <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" /> : ""}
                               </Col>
                             </Row>
+                            <div className="d-flex d-lg-none pt-2">Don't have an account?,
+                              <Link to="/register">
+                                &nbsp;Register Now!
+                              </Link>
+                            </div>
                           </Form>
                         </CardBody>
                       </Card>

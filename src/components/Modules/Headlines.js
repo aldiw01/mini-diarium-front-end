@@ -1,17 +1,43 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, ListGroup, ListGroupItem, ListGroupItemText, Row } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, ListGroup, ListGroupItem, ListGroupItemText, Row } from 'reactstrap';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import AddComment from 'components/Modals/Comments/AddComment';
 
 const propTypes = {
-  profile: PropTypes.object,
+  directorate: PropTypes.object,
+  directorateReply: PropTypes.string,
+  latest: PropTypes.object,
+  latestReply: PropTypes.string,
+  top: PropTypes.object,
+  topReply: PropTypes.string
 };
 
 class Headlines extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      comment: false,
+      myComment: ""
+    }
+  }
+
+  handleComment = (emoji) => {
+    this.setState({
+      myComment: this.state.myComment + emoji.native
+    })
+  }
+
+  toggle = () => {
+    this.setState({
+      comment: !this.state.comment,
+    });
+  }
+
   render() {
 
-    const { profile } = this.props;
+    const { directorate, directorateReply, latest, latestReply, top, topReply } = this.props;
 
     const addButton = {
       position: "absolute",
@@ -22,7 +48,7 @@ class Headlines extends Component {
     return (
       <React.Fragment>
         <Card>
-          <CardHeader className="bg-danger">
+          <CardHeader>
             <i className="fa fa-star"></i><strong>Curhat Headlines</strong>
             <Link to="/curhat">
               <Button color="dark" style={addButton} active tabIndex={-1}>Post Curhat <i className="icon-paper-plane" /></Button>
@@ -35,64 +61,81 @@ class Headlines extends Component {
               <ListGroupItem action>
                 <Row>
                   <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + profile.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={profile.photo} />
+                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + top.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={top.photo} />
                   </Col>
                   <Col xs="10" className="p-0">
-                    <strong>{profile.name}</strong>
-                    <small> {moment().format("lll")}</small>
-                    <p>{profile.directorate}</p>
+                    <strong>{top.name}</strong>
+                    <small> {moment(top.createdAt).format("lll")}</small>
+                    <p>Directorate {top.directorate}</p>
                   </Col>
                   <Col xs="12">
                     <ListGroupItemText>
-                      Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
+                      {top.message}
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="icon-like" /> 77 Like</Button>
-                <Button className="btn ml-2"><i className="icon-bubble" /> 21 Reply</Button>
+                <ButtonGroup>
+                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {top.reactions}</Button>
+                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
+                </ButtonGroup>
+                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {topReply} Reply</Button>
               </ListGroupItem>
 
               <strong className="pt-2">Top by your directorate</strong>
               <ListGroupItem action>
                 <Row>
                   <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + profile.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={profile.photo} />
+                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + directorate.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={directorate.photo} />
                   </Col>
                   <Col xs="10" className="p-0">
-                    <strong>{profile.name}</strong>
-                    <small> {moment().format("lll")}</small>
-                    <p>{profile.directorate}</p>
+                    <strong>{directorate.name}</strong>
+                    <small> {moment(directorate.createdAt).format("lll")}</small>
+                    <p>Directorate {directorate.directorate}</p>
                   </Col>
                   <Col xs="12">
                     <ListGroupItemText>
-                      Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
+                      {directorate.message}
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="icon-like" /> 67 Like</Button>
-                <Button className="btn ml-2"><i className="icon-bubble" /> 13 Reply</Button>
+                <ButtonGroup>
+                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {directorate.reactions}</Button>
+                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
+                </ButtonGroup>
+                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {directorateReply} Reply</Button>
               </ListGroupItem>
 
               <strong className="pt-2">Latest</strong>
               <ListGroupItem action>
                 <Row>
                   <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + profile.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={profile.photo} />
+                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + latest.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={latest.photo} />
                   </Col>
                   <Col xs="10" className="p-0">
-                    <strong>{profile.name}</strong>
-                    <small> {moment().format("lll")}</small>
-                    <p>{profile.directorate}</p>
+                    <strong>{latest.name}</strong>
+                    <small> {moment(latest.createdAt).format("lll")}</small>
+                    <p>Directorate {latest.directorate}</p>
                   </Col>
                   <Col xs="12">
                     <ListGroupItemText>
-                      Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.
+                      {latest.message}
                     </ListGroupItemText>
                   </Col>
                 </Row>
-                <Button className="btn"><i className="icon-like" /> 0 Like</Button>
-                <Button className="btn ml-2"><i className="icon-bubble" /> 0 Reply</Button>
+                <ButtonGroup>
+                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {latest.reactions}</Button>
+                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
+                </ButtonGroup>
+                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {latestReply} Reply</Button>
               </ListGroupItem>
+
+              <AddComment
+                comment={this.state.comment}
+                data={top}
+                handleComment={this.handleComment}
+                myComment={this.state.myComment}
+                toggleComment={this.toggle}
+              />
 
             </ListGroup>
           </CardBody>

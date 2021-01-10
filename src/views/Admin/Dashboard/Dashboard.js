@@ -35,11 +35,12 @@ class Dashboard extends Component {
         status: '',
         created: ''
       }],
-      profile: {
-        name: "Aldi Wiranata",
-        directorate: "Direktorat Digital Business",
-        photo: "profile_photo_970037.png"
-      }
+      directorate: [],
+      directorateReply: "",
+      latest: [],
+      latestReply: "",
+      top: [],
+      topReply: ""
     };
     this.chartData = {
       labels: [
@@ -85,6 +86,22 @@ class Dashboard extends Component {
     axios.get(process.env.REACT_APP_API_PATH + '/presence/user/' + this.Auth.getProfile().id + '/' + tanggal)
       .then(res => {
         this.setState({ presence: res.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    axios.get(process.env.REACT_APP_API_PATH + '/posts/headlines/' + this.Auth.getProfile().directorate)
+      .then(res => {
+        console.log(this.Auth.getProfile().directorate)
+        this.setState({
+          directorate: res.data.directorate.post[0],
+          directorateReply: res.data.directorate.comments.length,
+          latest: res.data.latest.post[0],
+          latestReply: res.data.latest.comments.length,
+          top: res.data.top.post[0],
+          topReply: res.data.top.comments.length,
+        });
       })
       .catch(error => {
         console.log(error);
@@ -269,7 +286,12 @@ class Dashboard extends Component {
             </Card>
 
             <Headlines
-              profile={this.state.profile}
+              directorate={this.state.directorate}
+              directorateReply={this.state.directorateReply}
+              latest={this.state.latest}
+              latestReply={this.state.latestReply}
+              top={this.state.top}
+              topReply={this.state.topReply}
             />
           </Col>
 
