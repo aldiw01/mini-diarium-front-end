@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, DropdownMenu, DropdownToggle, Nav, Row, Input } from 'reactstrap';
 import { AppHeaderDropdown } from '@coreui/react';
 import AuthService from 'server/AuthService';
+import axios from 'axios';
 import 'emoji-mart/css/emoji-mart.css';
 import { Picker } from 'emoji-mart';
 
@@ -20,6 +21,8 @@ class Curhat extends Component {
             post: false,
             myComment: '',
             myPost: '',
+            photo: '',
+            data:'',
             dataLatest: [
                 {
                     id: '3',
@@ -69,6 +72,26 @@ class Curhat extends Component {
         }
     }
 
+    getData = () => {
+        axios.get(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id)
+          .then(res => {
+            this.setState({
+              photo: res.data[0].photo,
+              data: [{
+                NIK: res.data[0].id,
+                Name: res.data[0].name,
+                Email: res.data[0].email,
+                Directorate: res.data[0].directorate,
+                Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
+                Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
+              }]
+            })
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+
     handleChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -85,6 +108,9 @@ class Curhat extends Component {
             right: "20px",
             top: "5px",
         }
+        const user = this.Auth.getProfile().name;
+        const photo_url = this.state.photo ? this.state.photo : "test.jpg"
+        const divisi =this.state.data.Directorate;
 
         return (
             <div className="animated fadeIn">
@@ -93,13 +119,22 @@ class Curhat extends Component {
 
                     <Col xs="12" xl="12">
                         <Card>
+                            <CardHeader className="p-2">
+                            <i className="fa fa-heart"></i><strong>Curahkan Isi Hatimu Disini</strong>
+                            </CardHeader>
                             <CardBody className="p-2">
-                                <Input type="textarea" onChange={this.handleChange} placeholder="What is in your mind?" name="myPost" value={this.state.myPost} required />
+                                <div className="media">
+                                    <img style={{ borderRadius: "40%" }} src={process.env.REACT_APP_API_PATH + '/uploads/users/' + photo_url} className="mr-3" alt="..."></img>
+                                    <div className="media-body">
+                                        <h2>{user}</h2>
+                                        <Input type="textarea" onChange={this.handleChange} placeholder={"Apa yang anda pikirkan " + user + " ?"}  name="myPost" value={this.state.myPost} required />
+                                    </div>
+                                </div>
                             </CardBody>
                             <CardFooter className="py-1 card-accent-danger">
                                 <div style={addButton}>
                                     <Button color="light" className="btn float-right">
-                                        <i className="icon-paper-plane"></i>
+                                        <i className="icon-paper-plane"> Post</i>
                                     </Button>
                                     <Nav className="mt-n2 float-right" navbar>
                                         <AppHeaderDropdown direction="down">
