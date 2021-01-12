@@ -49,13 +49,6 @@ class Headlines extends Component {
       top: "5px",
     }
 
-    const topPhoto = top.photo === "" || top.photo === undefined ? "test.jpg" : top.photo;
-    const topName = top.name === "" || top.name === undefined ? "Anon" : top.name;
-    const directoratePhoto = directorate.photo === "" || directorate.photo === undefined ? "test.jpg" : directorate.photo;
-    const directorateName = directorate.name === "" || directorate.name === undefined ? "Anon" : directorate.name;
-    const latestPhoto = latest.photo === "" || latest.photo === undefined ? "test.jpg" : latest.photo;
-    const latestName = latest.name === "" || latest.name === undefined ? "Anon" : latest.name;
-
     return (
       <React.Fragment>
         <Card>
@@ -74,10 +67,10 @@ class Headlines extends Component {
                   <React.Fragment>
                     <Row>
                       <Col xs="2">
-                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + topPhoto} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={topPhoto} />
+                        <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${top.photo === "" || top.photo === undefined ? "test.jpg" : top.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={top.photo} />
                       </Col>
                       <Col xs="10" className="p-0">
-                        <strong>{topName}</strong>
+                        <strong>{top.name === "" || top.name === undefined ? "Anon" : top.name}</strong>
                         <small> {moment(top.createdAt).format("lll")}</small>
                         <p>Directorate {top.directorate}</p>
                       </Col>
@@ -103,10 +96,10 @@ class Headlines extends Component {
                   <React.Fragment>
                     <Row>
                       <Col xs="2">
-                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + directoratePhoto} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={directoratePhoto} />
+                        <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${directorate.photo === "" || directorate.photo === undefined ? "test.jpg" : directorate.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={directorate.photo} />
                       </Col>
                       <Col xs="10" className="p-0">
-                        <strong>{directorateName}</strong>
+                        <strong>{directorate.name === "" || directorate.name === undefined ? "Anon" : directorate.name}</strong>
                         <small> {moment(directorate.createdAt).format("lll")}</small>
                         <p>Directorate {directorate.directorate}</p>
                       </Col>
@@ -132,10 +125,10 @@ class Headlines extends Component {
                   <React.Fragment>
                     <Row>
                       <Col xs="2">
-                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + latestPhoto} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={latestPhoto} />
+                        <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${latest.photo === "" || latest.photo === undefined ? "test.jpg" : latest.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={latest.photo} />
                       </Col>
                       <Col xs="10" className="p-0">
-                        <strong>{latestName}</strong>
+                        <strong>{latest.name === "" || latest.name === undefined ? "Anon" : latest.name}</strong>
                         <small> {moment(latest.createdAt).format("lll")}</small>
                         <p>Directorate {latest.directorate}</p>
                       </Col>
