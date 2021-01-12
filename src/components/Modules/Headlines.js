@@ -18,7 +18,8 @@ const propTypes = {
   loader: PropTypes.bool,
   myComment: PropTypes.string,
   top: PropTypes.object,
-  topReply: PropTypes.number
+  topReply: PropTypes.number,
+  votes: PropTypes.array
 };
 
 class Headlines extends Component {
@@ -31,6 +32,15 @@ class Headlines extends Component {
     }
   }
 
+  checkClicked = (votes, id) => {
+    var vote = votes.filter((item, i) => {
+      return id === item.post_id
+    })
+    var init = 0;
+    var sum = vote.reduce((a, b) => a + b.reactions, init)
+    return sum
+  }
+
   toggle = (count, data) => {
     this.setState({
       comment: !this.state.comment,
@@ -41,7 +51,7 @@ class Headlines extends Component {
 
   render() {
 
-    const { directorate, directorateReply, handleChange, handleComment, handleDownvote, handleEmoji, handleUpvote, latest, latestReply, loader, myComment, top, topReply } = this.props;
+    const { directorate, directorateReply, handleChange, handleComment, handleDownvote, handleEmoji, handleUpvote, latest, latestReply, loader, myComment, top, topReply, votes } = this.props;
 
     const addButton = {
       position: "absolute",
@@ -80,9 +90,26 @@ class Headlines extends Component {
                         </ListGroupItemText>
                       </Col>
                     </Row>
+
                     <ButtonGroup>
-                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, top.id, 1)}><i className="icon-arrow-up" /> {top.reactions}</Button>
-                      <Button title="Downvote" onClick={(e) => handleDownvote(e, top.id, 1)}><i className="icon-arrow-down" /></Button>
+                      <Button
+                        color={this.checkClicked(votes, top.id) === 1 ? "primary" : "secondary"}
+                        className="border-primary"
+                        style={{ zIndex: "10" }}
+                        title="Upvote"
+                        onClick={(e) => handleUpvote(e, top.id)}
+                        disabled={this.checkClicked(votes, top.id) === 1}
+                      >
+                        <i className="icon-arrow-up" /> {top.reactions}
+                      </Button>
+                      <Button
+                        color={this.checkClicked(votes, top.id) === -1 ? "danger" : "secondary"}
+                        title="Downvote"
+                        onClick={(e) => handleDownvote(e, top.id)}
+                        disabled={this.checkClicked(votes, top.id) === -1}
+                      >
+                        <i className="icon-arrow-down" />
+                      </Button>
                     </ButtonGroup>
                     <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(topReply, top)}><i className="icon-bubble" /> {topReply} Reply</Button>
                   </React.Fragment>
@@ -109,9 +136,26 @@ class Headlines extends Component {
                         </ListGroupItemText>
                       </Col>
                     </Row>
+
                     <ButtonGroup>
-                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, directorate.id, 2)}><i className="icon-arrow-up" /> {directorate.reactions}</Button>
-                      <Button title="Downvote" onClick={(e) => handleDownvote(e, directorate.id, 2)}><i className="icon-arrow-down" /></Button>
+                      <Button
+                        color={this.checkClicked(votes, directorate.id) === 1 ? "primary" : "secondary"}
+                        className="border-primary"
+                        style={{ zIndex: "10" }}
+                        title="Upvote"
+                        onClick={(e) => handleUpvote(e, directorate.id)}
+                        disabled={this.checkClicked(votes, directorate.id) === 1}
+                      >
+                        <i className="icon-arrow-up" /> {directorate.reactions}
+                      </Button>
+                      <Button
+                        color={this.checkClicked(votes, directorate.id) === -1 ? "danger" : "secondary"}
+                        title="Downvote"
+                        onClick={(e) => handleDownvote(e, directorate.id)}
+                        disabled={this.checkClicked(votes, directorate.id) === -1}
+                      >
+                        <i className="icon-arrow-down" />
+                      </Button>
                     </ButtonGroup>
                     <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(directorateReply, directorate)}><i className="icon-bubble" /> {directorateReply} Reply</Button>
                   </React.Fragment>
@@ -138,9 +182,26 @@ class Headlines extends Component {
                         </ListGroupItemText>
                       </Col>
                     </Row>
+
                     <ButtonGroup>
-                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, latest.id, 3)}><i className="icon-arrow-up" /> {latest.reactions}</Button>
-                      <Button title="Downvote" onClick={(e) => handleDownvote(e, latest.id, 3)}><i className="icon-arrow-down" /></Button>
+                      <Button
+                        color={this.checkClicked(votes, latest.id) === 1 ? "primary" : "secondary"}
+                        className="border-primary"
+                        style={{ zIndex: "10" }}
+                        title="Upvote"
+                        onClick={(e) => handleUpvote(e, latest.id)}
+                        disabled={this.checkClicked(votes, latest.id) === 1}
+                      >
+                        <i className="icon-arrow-up" /> {latest.reactions}
+                      </Button>
+                      <Button
+                        color={this.checkClicked(votes, latest.id) === -1 ? "danger" : "secondary"}
+                        title="Downvote"
+                        onClick={(e) => handleDownvote(e, latest.id)}
+                        disabled={this.checkClicked(votes, latest.id) === -1}
+                      >
+                        <i className="icon-arrow-down" />
+                      </Button>
                     </ButtonGroup>
                     <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(latestReply, latest)}><i className="icon-bubble" /> {latestReply} Reply</Button>
                   </React.Fragment>
@@ -154,10 +215,13 @@ class Headlines extends Component {
                 data={this.state.focus}
                 handleComment={handleComment}
                 handleChange={handleChange}
+                handleDownvote={handleDownvote}
                 handleEmoji={handleEmoji}
+                handleUpvote={handleUpvote}
                 loader={loader}
                 myComment={myComment}
                 toggleComment={this.toggle}
+                votes={votes}
               />
 
             </ListGroup>

@@ -31,7 +31,8 @@ class Curhat extends Component {
       myComment: '',
       myPost: '',
       post: false,
-      photo: ''
+      photo: '',
+      votes: []
     }
   }
 
@@ -56,6 +57,7 @@ class Curhat extends Component {
     this.getPostDirectorate();
     this.getPostLatest();
     this.getPostTop();
+    this.getVotes();
   }
 
   getPostDirectorate = () => {
@@ -99,6 +101,16 @@ class Curhat extends Component {
         this.setState({
           photo: "test.jpg"
         })
+        console.log(error);
+      });
+  }
+
+  getVotes = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/votes/user/' + this.Auth.getProfile().id)
+      .then(res => {
+        this.setState({ votes: res.data });
+      })
+      .catch(error => {
         console.log(error);
       });
   }
@@ -160,6 +172,32 @@ class Curhat extends Component {
       });
   }
 
+  handleUpvote = (event, id) => {
+    event.preventDefault();
+
+    axios.post(process.env.REACT_APP_API_PATH + '/votes/add/' + this.Auth.getProfile().id + '/' + id)
+      .then(() => {
+        this.getData();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
+  }
+
+  handleDownvote = (event, id) => {
+    event.preventDefault();
+
+    axios.post(process.env.REACT_APP_API_PATH + '/votes/remove/' + this.Auth.getProfile().id + '/' + id)
+      .then(() => {
+        this.getData();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
+  }
+
   toggleCheckbox = () => {
     this.setState({
       anon: !this.state.anon,
@@ -178,6 +216,15 @@ class Curhat extends Component {
     this.setState({
       activeTab: tab,
     });
+  }
+
+  checkClicked = (votes, id) => {
+    var vote = votes.filter((item, i) => {
+      return id === item.post_id
+    })
+    var init = 0;
+    var sum = vote.reduce((a, b) => a + b.reactions, init)
+    return sum
   }
 
   render() {
@@ -291,10 +338,28 @@ class Curhat extends Component {
                               </ListGroupItemText>
                             </Col>
                           </Row>
+
                           <ButtonGroup>
-                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
-                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === 1 ? "primary" : "secondary"}
+                              className="border-primary"
+                              style={{ zIndex: "10" }}
+                              title="Upvote"
+                              onClick={(e) => this.handleUpvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === 1}
+                            >
+                              <i className="icon-arrow-up" /> {item.post.reactions}
+                            </Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === -1 ? "danger" : "secondary"}
+                              title="Downvote"
+                              onClick={(e) => this.handleDownvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === -1}
+                            >
+                              <i className="icon-arrow-down" />
+                            </Button>
                           </ButtonGroup>
+
                           <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
                           <hr />
                         </div>
@@ -320,8 +385,24 @@ class Curhat extends Component {
                             </Col>
                           </Row>
                           <ButtonGroup>
-                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
-                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === 1 ? "primary" : "secondary"}
+                              className="border-primary"
+                              style={{ zIndex: "10" }}
+                              title="Upvote"
+                              onClick={(e) => this.handleUpvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === 1}
+                            >
+                              <i className="icon-arrow-up" /> {item.post.reactions}
+                            </Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === -1 ? "danger" : "secondary"}
+                              title="Downvote"
+                              onClick={(e) => this.handleDownvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === -1}
+                            >
+                              <i className="icon-arrow-down" />
+                            </Button>
                           </ButtonGroup>
                           <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
                           <hr />
@@ -348,8 +429,24 @@ class Curhat extends Component {
                             </Col>
                           </Row>
                           <ButtonGroup>
-                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
-                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === 1 ? "primary" : "secondary"}
+                              className="border-primary"
+                              style={{ zIndex: "10" }}
+                              title="Upvote"
+                              onClick={(e) => this.handleUpvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === 1}
+                            >
+                              <i className="icon-arrow-up" /> {item.post.reactions}
+                            </Button>
+                            <Button
+                              color={this.checkClicked(this.state.votes, item.post.id) === -1 ? "danger" : "secondary"}
+                              title="Downvote"
+                              onClick={(e) => this.handleDownvote(e, item.post.id)}
+                              disabled={this.checkClicked(this.state.votes, item.post.id) === -1}
+                            >
+                              <i className="icon-arrow-down" />
+                            </Button>
                           </ButtonGroup>
                           <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
                           <hr />
@@ -372,9 +469,12 @@ class Curhat extends Component {
           loader={this.state.loader}
           handleChange={this.handleChange}
           handleComment={this.handleComment}
+          handleDownvote={this.handleDownvote}
           handleEmoji={this.handleEmoji}
+          handleUpvote={this.handleUpvote}
           myComment={this.state.myComment}
           toggleComment={this.toggleComment}
+          votes={this.state.votes}
         />
 
 

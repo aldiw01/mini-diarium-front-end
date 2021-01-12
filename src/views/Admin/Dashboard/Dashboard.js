@@ -42,7 +42,8 @@ class Dashboard extends Component {
       latest: {},
       latestReply: 0,
       top: {},
-      topReply: 0
+      topReply: 0,
+      votes: []
     };
     this.chartData = {
       labels: [
@@ -149,6 +150,18 @@ class Dashboard extends Component {
       .catch(error => {
         console.log(error);
       });
+
+    this.getVotes()
+  }
+
+  getVotes = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/votes/user/' + this.Auth.getProfile().id)
+      .then(res => {
+        this.setState({ votes: res.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   loading = () =>
@@ -201,10 +214,10 @@ class Dashboard extends Component {
       });
   }
 
-  handleUpvote = (event, id, index) => {
+  handleUpvote = (event, id) => {
     event.preventDefault();
 
-    axios.put(process.env.REACT_APP_API_PATH + '/posts/reactions/add/' + id)
+    axios.post(process.env.REACT_APP_API_PATH + '/votes/add/' + this.Auth.getProfile().id + '/' + id)
       .then(() => {
         this.getHeadlines();
       })
@@ -217,9 +230,9 @@ class Dashboard extends Component {
   handleDownvote = (event, id) => {
     event.preventDefault();
 
-    axios.put(process.env.REACT_APP_API_PATH + '/posts/reactions/remove/' + id)
+    axios.post(process.env.REACT_APP_API_PATH + '/votes/remove/' + this.Auth.getProfile().id + '/' + id)
       .then(() => {
-        this.getData();
+        this.getHeadlines();
       })
       .catch(error => {
         alert(error);
@@ -363,6 +376,7 @@ class Dashboard extends Component {
               myComment={this.state.myComment}
               top={this.state.top}
               topReply={this.state.topReply}
+              votes={this.state.votes}
             />
           </Col>
 

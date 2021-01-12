@@ -11,11 +11,14 @@ const propTypes = {
   countReply: PropTypes.number,
   data: PropTypes.object,
   handleChange: PropTypes.func,
+  handleDownvote: PropTypes.func,
   handleComment: PropTypes.func,
   handleEmoji: PropTypes.func,
+  handleUpvote: PropTypes.func,
   loader: PropTypes.bool,
   myComment: PropTypes.string,
-  toggleComment: PropTypes.func
+  toggleComment: PropTypes.func,
+  votes: PropTypes.array
 };
 
 class AddComment extends Component {
@@ -29,7 +32,7 @@ class AddComment extends Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    if (this.props.data !== prevProps.data || this.props.loader !== prevProps.loader) {
+    if (this.props.data !== prevProps.data || this.props.loader !== prevProps.loader || this.props.votes !== prevProps.votes) {
       this.getData();
     }
   }
@@ -51,9 +54,18 @@ class AddComment extends Component {
     });
   }
 
+  checkClicked = (votes, id) => {
+    var vote = votes.filter((item, i) => {
+      return id === item.post_id
+    })
+    var init = 0;
+    var sum = vote.reduce((a, b) => a + b.reactions, init)
+    return sum
+  }
+
   render() {
 
-    const { comment, countReply, data, handleChange, handleComment, handleEmoji, myComment, toggleComment } = this.props;
+    const { comment, countReply, data, handleChange, handleComment, handleDownvote, handleEmoji, handleUpvote, myComment, toggleComment, votes } = this.props;
 
     const photo = data.photo === "" || data.photo === undefined ? "test.jpg" : data.photo;
     const name = data.name === "" || data.name === undefined ? "Anon" : data.name;
@@ -78,8 +90,24 @@ class AddComment extends Component {
               </Col>
             </Row>
             <ButtonGroup>
-              <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {data.reactions}</Button>
-              <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+              <Button
+                color={this.checkClicked(votes, data.id) === 1 ? "primary" : "secondary"}
+                className="border-primary"
+                style={{ zIndex: "10" }}
+                title="Upvote"
+                onClick={(e) => handleUpvote(e, data.id)}
+                disabled={this.checkClicked(votes, data.id) === 1}
+              >
+                <i className="icon-arrow-up" /> {data.reactions}
+              </Button>
+              <Button
+                color={this.checkClicked(votes, data.id) === -1 ? "danger" : "secondary"}
+                title="Downvote"
+                onClick={(e) => handleDownvote(e, data.id)}
+                disabled={this.checkClicked(votes, data.id) === -1}
+              >
+                <i className="icon-arrow-down" />
+              </Button>
             </ButtonGroup>
             <Button type="button" title="Comments" className="btn ml-2"><i className="icon-bubble" /> {countReply} Reply</Button>
 
@@ -105,8 +133,24 @@ class AddComment extends Component {
                     </Col>
                   </Row>
                   <ButtonGroup>
-                    <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.reactions}</Button>
-                    <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                    <Button
+                      color={this.checkClicked(votes, item.id) === 1 ? "primary" : "secondary"}
+                      className="border-primary"
+                      style={{ zIndex: "10" }}
+                      title="Upvote"
+                      onClick={(e) => handleUpvote(e, item.id)}
+                      disabled={this.checkClicked(votes, item.id) === 1}
+                    >
+                      <i className="icon-arrow-up" /> {item.reactions}
+                    </Button>
+                    <Button
+                      color={this.checkClicked(votes, item.id) === -1 ? "danger" : "secondary"}
+                      title="Downvote"
+                      onClick={(e) => handleDownvote(e, item.id)}
+                      disabled={this.checkClicked(votes, item.id) === -1}
+                    >
+                      <i className="icon-arrow-down" />
+                    </Button>
                   </ButtonGroup>
                 </div>
               ))}
