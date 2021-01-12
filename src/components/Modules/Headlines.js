@@ -7,11 +7,18 @@ import AddComment from 'components/Modals/Comments/AddComment';
 
 const propTypes = {
   directorate: PropTypes.object,
-  directorateReply: PropTypes.string,
+  directorateReply: PropTypes.number,
+  handleChange: PropTypes.func,
+  handleComment: PropTypes.func,
+  handleDownvote: PropTypes.func,
+  handleEmoji: PropTypes.func,
+  handleUpvote: PropTypes.func,
   latest: PropTypes.object,
-  latestReply: PropTypes.string,
+  latestReply: PropTypes.number,
+  loader: PropTypes.bool,
+  myComment: PropTypes.string,
   top: PropTypes.object,
-  topReply: PropTypes.string
+  topReply: PropTypes.number
 };
 
 class Headlines extends Component {
@@ -19,25 +26,22 @@ class Headlines extends Component {
     super(props)
     this.state = {
       comment: false,
-      myComment: ""
+      countReply: 0,
+      focus: {}
     }
   }
 
-  handleComment = (emoji) => {
-    this.setState({
-      myComment: this.state.myComment + emoji.native
-    })
-  }
-
-  toggle = () => {
+  toggle = (count, data) => {
     this.setState({
       comment: !this.state.comment,
+      countReply: count,
+      focus: data
     });
   }
 
   render() {
 
-    const { directorate, directorateReply, latest, latestReply, top, topReply } = this.props;
+    const { directorate, directorateReply, handleChange, handleComment, handleDownvote, handleEmoji, handleUpvote, latest, latestReply, loader, myComment, top, topReply } = this.props;
 
     const addButton = {
       position: "absolute",
@@ -59,81 +63,100 @@ class Headlines extends Component {
 
               <strong>Top Trending</strong>
               <ListGroupItem action>
-                <Row>
-                  <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + top.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={top.photo} />
-                  </Col>
-                  <Col xs="10" className="p-0">
-                    <strong>{top.name}</strong>
-                    <small> {moment(top.createdAt).format("lll")}</small>
-                    <p>Directorate {top.directorate}</p>
-                  </Col>
-                  <Col xs="12">
-                    <ListGroupItemText>
-                      {top.message}
-                    </ListGroupItemText>
-                  </Col>
-                </Row>
-                <ButtonGroup>
-                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {top.reactions}</Button>
-                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
-                </ButtonGroup>
-                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {topReply} Reply</Button>
+                {top ?
+                  <React.Fragment>
+                    <Row>
+                      <Col xs="2">
+                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + top.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={top.photo} />
+                      </Col>
+                      <Col xs="10" className="p-0">
+                        <strong>{top.name}</strong>
+                        <small> {moment(top.createdAt).format("lll")}</small>
+                        <p>Directorate {top.directorate}</p>
+                      </Col>
+                      <Col xs="12">
+                        <ListGroupItemText>
+                          {top.message}
+                        </ListGroupItemText>
+                      </Col>
+                    </Row>
+                    <ButtonGroup>
+                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, top.id, 1)}><i className="icon-arrow-up" /> {top.reactions}</Button>
+                      <Button title="Downvote" onClick={(e) => handleDownvote(e, top.id, 1)}><i className="icon-arrow-down" /></Button>
+                    </ButtonGroup>
+                    <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(topReply, top)}><i className="icon-bubble" /> {topReply} Reply</Button>
+                  </React.Fragment>
+                  : "Headline Not Found"
+                }
               </ListGroupItem>
 
               <strong className="pt-2">Top by your directorate</strong>
               <ListGroupItem action>
-                <Row>
-                  <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + directorate.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={directorate.photo} />
-                  </Col>
-                  <Col xs="10" className="p-0">
-                    <strong>{directorate.name}</strong>
-                    <small> {moment(directorate.createdAt).format("lll")}</small>
-                    <p>Directorate {directorate.directorate}</p>
-                  </Col>
-                  <Col xs="12">
-                    <ListGroupItemText>
-                      {directorate.message}
-                    </ListGroupItemText>
-                  </Col>
-                </Row>
-                <ButtonGroup>
-                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {directorate.reactions}</Button>
-                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
-                </ButtonGroup>
-                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {directorateReply} Reply</Button>
+                {directorate ?
+                  <React.Fragment>
+                    <Row>
+                      <Col xs="2">
+                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + directorate.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={directorate.photo} />
+                      </Col>
+                      <Col xs="10" className="p-0">
+                        <strong>{directorate.name}</strong>
+                        <small> {moment(directorate.createdAt).format("lll")}</small>
+                        <p>Directorate {directorate.directorate}</p>
+                      </Col>
+                      <Col xs="12">
+                        <ListGroupItemText>
+                          {directorate.message}
+                        </ListGroupItemText>
+                      </Col>
+                    </Row>
+                    <ButtonGroup>
+                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, directorate.id, 2)}><i className="icon-arrow-up" /> {directorate.reactions}</Button>
+                      <Button title="Downvote" onClick={(e) => handleDownvote(e, directorate.id, 2)}><i className="icon-arrow-down" /></Button>
+                    </ButtonGroup>
+                    <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(directorateReply, directorate)}><i className="icon-bubble" /> {directorateReply} Reply</Button>
+                  </React.Fragment>
+                  : "Headline Not Found"
+                }
               </ListGroupItem>
 
               <strong className="pt-2">Latest</strong>
               <ListGroupItem action>
-                <Row>
-                  <Col xs="2">
-                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + latest.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={latest.photo} />
-                  </Col>
-                  <Col xs="10" className="p-0">
-                    <strong>{latest.name}</strong>
-                    <small> {moment(latest.createdAt).format("lll")}</small>
-                    <p>Directorate {latest.directorate}</p>
-                  </Col>
-                  <Col xs="12">
-                    <ListGroupItemText>
-                      {latest.message}
-                    </ListGroupItemText>
-                  </Col>
-                </Row>
-                <ButtonGroup>
-                  <Button color="primary" title="Upvote"><i className="icon-arrow-up" /> {latest.reactions}</Button>
-                  <Button title="Downvote"><i className="icon-arrow-down" /></Button>
-                </ButtonGroup>
-                <Button title="Comments" className="btn ml-2" onClick={this.toggle}><i className="icon-bubble" /> {latestReply} Reply</Button>
+                {latest ?
+                  <React.Fragment>
+                    <Row>
+                      <Col xs="2">
+                        <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + latest.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={latest.photo} />
+                      </Col>
+                      <Col xs="10" className="p-0">
+                        <strong>{latest.name}</strong>
+                        <small> {moment(latest.createdAt).format("lll")}</small>
+                        <p>Directorate {latest.directorate}</p>
+                      </Col>
+                      <Col xs="12">
+                        <ListGroupItemText>
+                          {latest.message}
+                        </ListGroupItemText>
+                      </Col>
+                    </Row>
+                    <ButtonGroup>
+                      <Button color="primary" title="Upvote" onClick={(e) => handleUpvote(e, latest.id, 3)}><i className="icon-arrow-up" /> {latest.reactions}</Button>
+                      <Button title="Downvote" onClick={(e) => handleDownvote(e, latest.id, 3)}><i className="icon-arrow-down" /></Button>
+                    </ButtonGroup>
+                    <Button title="Comments" className="btn ml-2" onClick={() => this.toggle(latestReply, latest)}><i className="icon-bubble" /> {latestReply} Reply</Button>
+                  </React.Fragment>
+                  : "Headline Not Found"
+                }
               </ListGroupItem>
 
               <AddComment
                 comment={this.state.comment}
-                data={top}
-                handleComment={this.handleComment}
-                myComment={this.state.myComment}
+                countReply={this.state.countReply}
+                data={this.state.focus}
+                handleComment={handleComment}
+                handleChange={handleChange}
+                handleEmoji={handleEmoji}
+                loader={loader}
+                myComment={myComment}
                 toggleComment={this.toggle}
               />
 

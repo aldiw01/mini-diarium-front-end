@@ -1,270 +1,386 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, CardFooter, CardHeader, Col, DropdownMenu, DropdownToggle, Nav, Row, Input } from 'reactstrap';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, Col, DropdownMenu, DropdownToggle, Input, ListGroupItemText, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import { AppHeaderDropdown } from '@coreui/react';
 import AuthService from 'server/AuthService';
 import axios from 'axios';
 import { Picker } from 'emoji-mart';
+import moment from 'moment';
+import AddComment from 'components/Modals/Comments/AddComment';
+import Spinner from 'react-spinkit';
 
 // import AddComment from 'components/Modals/Comments/AddComment';
 
 class Curhat extends Component {
 
-    constructor(props) {
-        super(props);
-        this.Auth = new AuthService();
-        if (!this.Auth.loggedIn()) {
-            window.location = '/login';
-        }
-        this.state = {
-            comment: false,
-            post: false,
-            myComment: '',
-            myPost: '',
-            photo: '',
-            data: '',
-            dataLatest: [
-                {
-                    id: '3',
-                    nickname: 'Pejuang Subuh',
-                    directorate: 'Mobile',
-                    curhat: 'Semoga tahun 2021 corona hilang, semua kembali normal dan bisa pulang kampung..',
-                    total_like: '1',
-                    total_comment: '0'
-                },
-                {
-                    id: '2',
-                    nickname: 'Kang Bakso',
-                    directorate: 'Finance',
-                    curhat: 'Saya diminta masuk ke kantor tiap hari oleh atasan, tapi tidak diberi uang lembur',
-                    total_like: '100',
-                    total_comment: '23'
-                }
-            ],
-            dataHottest: [
-                {
-                    id: '2',
-                    nickname: 'Kang Bakso',
-                    directorate: 'Finance',
-                    curhat: 'Saya diminta masuk ke kantor tiap hari oleh atasan, tapi tidak diberi uang lembur',
-                    total_like: '100',
-                    total_comment: '23'
-                },
-                {
-                    id: '1',
-                    nickname: 'Kerang Ajaib',
-                    directorate: 'Consumer',
-                    curhat: 'Teman-temang apa benar kalo kita rajin kerja nanti bakal cepat naik band?',
-                    total_like: '12',
-                    total_comment: '12'
-                }
-            ],
-            dataDirectorate: [
-                {
-                    id: '1',
-                    nickname: 'Kerang Ajaib',
-                    directorate: 'Consumer',
-                    curhat: 'Teman-temang apa benar kalo kita rajin kerja nanti bakal cepat naik band?',
-                    total_like: '12',
-                    total_comment: '12'
-                }
-            ]
-        }
+  constructor(props) {
+    super(props);
+    this.Auth = new AuthService();
+    if (!this.Auth.loggedIn()) {
+      window.location = '/login';
     }
-
-    getData = () => {
-        axios.get(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id)
-            .then(res => {
-                this.setState({
-                    photo: res.data[0].photo,
-                    data: [{
-                        NIK: res.data[0].id,
-                        Name: res.data[0].name,
-                        Email: res.data[0].email,
-                        Directorate: res.data[0].directorate,
-                        Registered: new Date(res.data[0].registered).toLocaleString('en-GB'),
-                        Updated: new Date(res.data[0].updated).toLocaleString('en-GB')
-                    }]
-                })
-            })
-            .catch(error => {
-                console.log(error);
-            });
+    this.state = {
+      activeTab: '1',
+      anon: false,
+      comment: false,
+      countReply: 0,
+      dataDirectorate: [],
+      dataLatest: [],
+      dataTop: [],
+      focus: {},
+      loader: false,
+      myComment: '',
+      myPost: '',
+      post: false,
+      photo: ''
     }
+  }
 
-    handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-    }
+  componentDidMount() {
+    this.getData();
+  }
 
-    toggleComment = () => {
+  getData = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/users/' + this.Auth.getProfile().id)
+      .then(res => {
         this.setState({
-            comment: !this.state.comment,
-        });
+          photo: res.data[0].photo
+        })
+      })
+      .catch(error => {
+        this.setState({
+          photo: "test.jpg"
+        })
+        console.log(error);
+      });
+
+    this.getPostDirectorate();
+    this.getPostLatest();
+    this.getPostTop();
+  }
+
+  getPostDirectorate = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/posts/directorate/' + this.Auth.getProfile().directorate)
+      .then(res => {
+        this.setState({
+          dataDirectorate: res.data
+        })
+      })
+      .catch(error => {
+        this.setState({
+          photo: "test.jpg"
+        })
+        console.log(error);
+      });
+  }
+
+  getPostLatest = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/posts/latest/all')
+      .then(res => {
+        this.setState({
+          dataLatest: res.data
+        })
+      })
+      .catch(error => {
+        this.setState({
+          photo: "test.jpg"
+        })
+        console.log(error);
+      });
+  }
+
+  getPostTop = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/posts/top/all')
+      .then(res => {
+        this.setState({
+          dataTop: res.data
+        })
+      })
+      .catch(error => {
+        this.setState({
+          photo: "test.jpg"
+        })
+        console.log(error);
+      });
+  }
+
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleEmoji = (emoji) => {
+    this.setState({
+      myComment: this.state.myComment + emoji.native
+    })
+  }
+
+  handlePost = (event) => {
+    this.setState({ loader: true });
+    event.preventDefault();
+    const req = {
+      user_id: this.Auth.getProfile().id,
+      photo: this.state.anon ? "" : this.state.photo,
+      name: this.state.anon ? "Anon" : this.Auth.getProfile().name,
+      directorate: this.Auth.getProfile().directorate,
+      message: this.state.myPost,
+    };
+    axios.post(process.env.REACT_APP_API_PATH + '/posts', req)
+      .then(() => {
+        this.setState({
+          loader: false,
+          myPost: ""
+        })
+        this.getData();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  handleComment = (event, id) => {
+    this.setState({ loader: true });
+    event.preventDefault();
+    const req = {
+      user_id: this.Auth.getProfile().id,
+      photo: this.state.anon ? "" : this.state.photo,
+      name: this.state.anon ? "Anon" : this.Auth.getProfile().name,
+      directorate: this.Auth.getProfile().directorate,
+      message: this.state.myComment,
+      header: id
+    };
+    axios.post(process.env.REACT_APP_API_PATH + '/posts/comments', req)
+      .then(() => {
+        this.setState({
+          loader: false,
+          myComment: ""
+        })
+        this.getData();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  toggleCheckbox = () => {
+    this.setState({
+      anon: !this.state.anon,
+    });
+  }
+
+  toggleComment = (count, data) => {
+    this.setState({
+      comment: !this.state.comment,
+      countReply: count,
+      focus: data
+    });
+  }
+
+  toggleTab = (tab) => {
+    this.setState({
+      activeTab: tab,
+    });
+  }
+
+  render() {
+
+    const addButton = {
+      right: "20px",
+      top: "5px",
     }
+    const photo_url = this.state.photo ? this.state.photo : "test.jpg";
+    const name = this.Auth.getProfile().name.split(" ");
+    const nickname = name[0].length > 3 ? name[0] : name[0] + " " + name[1];
 
-    render() {
+    return (
+      <div className="animated fadeIn">
 
-        const addButton = {
-            right: "20px",
-            top: "5px",
-        }
-        const user = this.Auth.getProfile().name;
-        const photo_url = this.state.photo ? this.state.photo : "test.jpg"
+        <Row>
 
-        return (
-            <div className="animated fadeIn">
+          <Col xs="12" xl="12">
+            <Card>
 
-                <Row>
-
-                    <Col xs="12" xl="12">
-                        <Card>
-                            <CardBody className="p-2">
-                                <div className="media">
-                                    <img style={{ borderRadius: "40%" }} src={process.env.REACT_APP_API_PATH + '/uploads/users/' + photo_url} className="mr-3" alt="..."></img>
-                                    <div className="media-body">
-                                        <h2>{user}</h2>
-                                        <Input type="textarea" onChange={this.handleChange} placeholder={"Apa yang anda pikirkan " + user + " ?"} name="myPost" value={this.state.myPost} required />
-                                    </div>
-                                </div>
-                            </CardBody>
-                            <CardFooter className="py-1 card-accent-danger">
-                                <div style={addButton}>
-                                    <Button color={this.state.myPost ? "danger" : "light"} disabled={this.state.myPost ? false : true} className="btn float-right">
-                                        <i className="icon-paper-plane"></i>
-                                    </Button>
-                                    <Nav className="mt-n2 float-right" navbar>
-                                        <AppHeaderDropdown direction="down">
-                                            <DropdownToggle nav>
-                                                <Button color="light" className="btn float-right">
-                                                    <i className="icon-emotsmile"></i>
-                                                </Button>
-                                            </DropdownToggle>
-                                            <DropdownMenu right style={{ right: 'auto' }}>
-                                                <Picker native color="#f86c6b" theme="dark" title="Choose emoji" emoji="wink" onSelect={(emoji) => { this.setState({ myPost: this.state.myPost + emoji.native }) }} />
-                                            </DropdownMenu>
-                                        </AppHeaderDropdown>
-                                    </Nav>
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    </Col>
-
-                    <Col xs="12" xl="4">
-                        <Card>
-                            <CardHeader>
-                                <i className="fa fa-calendar"></i><strong>Latest Curcol</strong>
-                            </CardHeader>
-                            <CardBody>
-
-                                {this.state.dataLatest.map((detail, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div className="media">
-                                                <img style={{ borderRadius: "50%" }} src={process.env.PUBLIC_URL + '/assets/img/avatars/1.jpg'} className="mr-3" alt="..."></img>
-                                                <div className="media-body">
-                                                    <h5 className="mt-0">{detail.nickname}</h5>
-                                                    <i>"{detail.curhat}"</i>
-                                                </div>
-                                            </div>
-                                            <div className="mt-2">
-                                                <Button className="mr-1"><i className="fa fa-thumbs-o-up"></i> {detail.total_like} Like</Button>
-                                                <Button
-                                                    onClick={this.toggleComment}
-                                                >
-                                                    <i className="fa fa-comment-o"></i> {detail.total_comment} Comment
-                                        </Button>
-                                            </div>
-                                            <hr></hr>
-                                        </div>
-                                    )
-                                })}
-
-                            </CardBody>
-                        </Card>
-                    </Col>
-
-                    <Col xs="12" xl="4">
-                        <Card>
-
-                            <CardHeader>
-                                <i className="fa fa-fire"></i><strong>Hottest Curcol</strong>
-                            </CardHeader>
-                            <CardBody>
-
-                                {this.state.dataHottest.map((detail, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div className="media">
-                                                <img style={{ borderRadius: "50%" }} src={process.env.PUBLIC_URL + '/assets/img/avatars/1.jpg'} className="mr-3" alt="..."></img>
-                                                <div className="media-body">
-                                                    <h5 className="mt-0">{detail.nickname}</h5>
-                                                    <i>"{detail.curhat}"</i>
-                                                </div>
-                                            </div>
-                                            <div className="mt-2">
-                                                <Button className="mr-1"><i className="fa fa-thumbs-o-up"></i> {detail.total_like} Like</Button>
-                                                <Button
-                                                    onClick={this.toggleComment}
-                                                >
-                                                    <i className="fa fa-comment-o"></i> {detail.total_comment} Comment
-                                        </Button>
-                                            </div>
-                                            <hr></hr>
-                                        </div>
-                                    )
-                                })}
-
-                            </CardBody>
-
-                        </Card>
-                    </Col>
-
-                    <Col xs="12" xl="4">
-                        <Card>
-
-                            <CardHeader>
-                                <i className="fa fa-joomla"></i><strong>Curcol in Your Unit</strong>
-                            </CardHeader>
-                            <CardBody>
-
-                                {this.state.dataDirectorate.map((detail, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div className="media">
-                                                <img style={{ borderRadius: "50%" }} src={process.env.PUBLIC_URL + '/assets/img/avatars/1.jpg'} className="mr-3" alt="..."></img>
-                                                <div className="media-body">
-                                                    <h5 className="mt-0">{detail.nickname}</h5>
-                                                    <i>"{detail.curhat}"</i>
-                                                </div>
-                                            </div>
-                                            <div className="mt-2">
-                                                <Button className="mr-1"><i className="fa fa-thumbs-o-up"></i> {detail.total_like} Like</Button>
-                                                <Button
-                                                    onClick={this.toggleComment}
-                                                >
-                                                    <i className="fa fa-comment-o"></i> {detail.total_comment} Comment
-                                        </Button>
-                                            </div>
-                                            <hr></hr>
-                                        </div>
-                                    )
-                                })}
-
-                            </CardBody>
-
-                        </Card>
-                    </Col>
-
+              <CardBody className="p-2">
+                <Row className="px-2">
+                  <Col xs="3" md="2" xl="1">
+                    <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + photo_url} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "60px", width: "60px" }} alt={photo_url} />
+                  </Col>
+                  <Col xs="9" md="10" xl="11" className="p-0">
+                    <h4 className="m-0">{this.Auth.getProfile().name}</h4>
+                    <p>Directorate {this.Auth.getProfile().directorate}</p>
+                  </Col>
+                  <Col xs="12 mt-2">
+                    <Input type="textarea" onChange={this.handleChange} placeholder={"What is in your mind " + nickname + "?"} name="myPost" value={this.state.myPost} required />
+                  </Col>
                 </Row>
+              </CardBody>
 
-                {/* <AddComment
-                    comment={this.state.comment}
-                    loader={this.state.loader}
-                    toggleComment={this.toggleCheckin}
-                /> */}
+              <CardFooter className="py-1 card-accent-danger">
+                <div style={addButton}>
+                  <Button color={this.state.myPost ? "danger" : "light"} disabled={this.state.myPost ? false : true} className="btn float-right" onClick={this.handlePost}>
+                    <i className="icon-paper-plane"></i>
+                  </Button>
+                  <Nav className="mt-n2 float-right" navbar>
+                    <AppHeaderDropdown direction="down">
+                      <DropdownToggle nav>
+                        <Button color="light" className="btn float-right">
+                          <i className="icon-emotsmile"></i>
+                        </Button>
+                      </DropdownToggle>
+                      <DropdownMenu right style={{ right: 'auto' }}>
+                        <Picker native color="#f86c6b" theme="dark" title="Choose emoji" emoji="wink" onSelect={(emoji) => { this.setState({ myPost: this.state.myPost + emoji.native }) }} />
+                      </DropdownMenu>
+                    </AppHeaderDropdown>
+                  </Nav>
+                  {this.state.loader ? <Spinner name='double-bounce' fadeIn="quarter" className="ml-auto float-right mt-1" /> : ""}
+                  <div className="custom-control custom-checkbox pt-2 position-absolute">
+                    <input type="checkbox" className="custom-control-input" id="customCheck1" onClick={this.toggleCheckbox} />
+                    <label className="custom-control-label" htmlFor="customCheck1">Send as Anon</label>
+                  </div>
+                </div>
+              </CardFooter>
 
-            </div>
-        );
-    }
+            </Card>
+          </Col>
+
+          <Col xs="12" xl="12">
+            <Card>
+              <CardBody>
+                <Col xs="12" className="p-0 m-0">
+                  <Nav tabs>
+                    <NavItem>
+                      <NavLink
+                        active={this.state.activeTab === '1'}
+                        onClick={() => { this.toggleTab('1'); }}
+                      >
+                        <i className="icon-fire"></i> <span className={this.state.activeTab === '1' ? 'font-weight-bold' : ''}> Top Trending</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        active={this.state.activeTab === '2'}
+                        onClick={() => { this.toggleTab('2'); }}
+                      >
+                        <i className="icon-organization"></i> <span className={this.state.activeTab === '2' ? 'font-weight-bold' : ''}> My Directorate</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        active={this.state.activeTab === '3'}
+                        onClick={() => { this.toggleTab('3'); }}
+                      >
+                        <i className="icon-calendar"></i> <span className={this.state.activeTab === '3' ? 'font-weight-bold' : ''}> Latest</span>
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent activeTab={this.state.activeTab}>
+
+                    <TabPane tabId="1">
+                      {this.state.dataTop.map((item, i) => (
+                        <div key={i}>
+                          <Row>
+                            <Col xs="3" md="2" xl="1">
+                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                            </Col>
+                            <Col xs="9" md="10" xl="11" className="p-0">
+                              <strong>{item.post.name}</strong>
+                              <small> {moment(item.post.createdAt).format("lll")}</small>
+                              <p>Directorate {item.post.directorate}</p>
+                            </Col>
+                            <Col xs="12">
+                              <ListGroupItemText>
+                                {item.post.message}
+                              </ListGroupItemText>
+                            </Col>
+                          </Row>
+                          <ButtonGroup>
+                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
+                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                          </ButtonGroup>
+                          <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
+                          <hr />
+                        </div>
+                      ))}
+                    </TabPane>
+
+                    <TabPane tabId="2">
+                      {this.state.dataDirectorate.map((item, i) => (
+                        <div key={i}>
+                          <Row>
+                            <Col xs="3" md="2" xl="1">
+                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                            </Col>
+                            <Col xs="9" md="10" xl="11" className="p-0">
+                              <strong>{item.post.name}</strong>
+                              <small> {moment(item.post.createdAt).format("lll")}</small>
+                              <p>Directorate {item.post.directorate}</p>
+                            </Col>
+                            <Col xs="12">
+                              <ListGroupItemText>
+                                {item.post.message}
+                              </ListGroupItemText>
+                            </Col>
+                          </Row>
+                          <ButtonGroup>
+                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
+                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                          </ButtonGroup>
+                          <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
+                          <hr />
+                        </div>
+                      ))}
+                    </TabPane>
+
+                    <TabPane tabId="3">
+                      {this.state.dataLatest.map((item, i) => (
+                        <div key={i}>
+                          <Row>
+                            <Col xs="3" md="2" xl="1">
+                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                            </Col>
+                            <Col xs="9" md="10" xl="11" className="p-0">
+                              <strong>{item.post.name}</strong>
+                              <small> {moment(item.post.createdAt).format("lll")}</small>
+                              <p>Directorate {item.post.directorate}</p>
+                            </Col>
+                            <Col xs="12">
+                              <ListGroupItemText>
+                                {item.post.message}
+                              </ListGroupItemText>
+                            </Col>
+                          </Row>
+                          <ButtonGroup>
+                            <Button type="button" color="primary" title="Upvote"><i className="icon-arrow-up" /> {item.post.reactions}</Button>
+                            <Button type="button" title="Downvote"><i className="icon-arrow-down" /></Button>
+                          </ButtonGroup>
+                          <Button title="Comments" className="btn ml-2" onClick={() => this.toggleComment(item.comments.length, item.post)}><i className="icon-bubble" /> {item.comments.length} Reply</Button>
+                          <hr />
+                        </div>
+                      ))}
+                    </TabPane>
+
+                  </TabContent>
+                </Col>
+              </CardBody>
+            </Card>
+          </Col>
+
+        </Row>
+
+        <AddComment
+          comment={this.state.comment}
+          countReply={this.state.countReply}
+          data={this.state.focus}
+          loader={this.state.loader}
+          handleChange={this.handleChange}
+          handleComment={this.handleComment}
+          handleEmoji={this.handleEmoji}
+          myComment={this.state.myComment}
+          toggleComment={this.toggleComment}
+        />
+
+
+      </div>
+    );
+  }
 }
 
 export default Curhat;

@@ -23,11 +23,13 @@ class Dashboard extends Component {
       window.location = '/login';
     }
     this.state = {
+      anon: false,
       checkin: false,
       checkout: false,
       inProgress: '',
       pending: '',
       done: '',
+      myComment: '',
       now: new Date().toString('en-GB'),
       presence: [{
         id: '',
@@ -35,12 +37,12 @@ class Dashboard extends Component {
         status: '',
         created: ''
       }],
-      directorate: [],
-      directorateReply: "",
-      latest: [],
-      latestReply: "",
-      top: [],
-      topReply: ""
+      directorate: {},
+      directorateReply: 0,
+      latest: {},
+      latestReply: 0,
+      top: {},
+      topReply: 0
     };
     this.chartData = {
       labels: [
@@ -91,23 +93,8 @@ class Dashboard extends Component {
         console.log(error);
       });
 
-    axios.get(process.env.REACT_APP_API_PATH + '/posts/headlines/' + this.Auth.getProfile().directorate)
-      .then(res => {
-        console.log(this.Auth.getProfile().directorate)
-        this.setState({
-          directorate: res.data.directorate.post[0],
-          directorateReply: res.data.directorate.comments.length,
-          latest: res.data.latest.post[0],
-          latestReply: res.data.latest.comments.length,
-          top: res.data.top.post[0],
-          topReply: res.data.top.comments.length,
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
     this.getChart();
+    this.getHeadlines();
   }
 
   getChart = () => {
@@ -147,6 +134,23 @@ class Dashboard extends Component {
       });
   }
 
+  getHeadlines = () => {
+    axios.get(process.env.REACT_APP_API_PATH + '/posts/headlines/' + this.Auth.getProfile().directorate)
+      .then(res => {
+        this.setState({
+          directorate: res.data.directorate.post[0],
+          directorateReply: res.data.directorate.comments.length,
+          latest: res.data.latest.post[0],
+          latestReply: res.data.latest.comments.length,
+          top: res.data.top.post[0],
+          topReply: res.data.top.comments.length,
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   loading = () =>
     <div className="animated fadeIn pt-1 text-center">
       <Spinner name='double-bounce' fadeIn="quarter" className="m-auto" />
@@ -161,7 +165,7 @@ class Dashboard extends Component {
     }
 
     axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
-      .then(res => {
+      .then(() => {
         this.setState({
           checkin: false,
           loader: false
@@ -183,7 +187,7 @@ class Dashboard extends Component {
     }
 
     axios.post(process.env.REACT_APP_API_PATH + '/presence', data)
-      .then(res => {
+      .then(() => {
         this.setState({
           checkout: false,
           finish: true,
@@ -195,6 +199,66 @@ class Dashboard extends Component {
         alert(error);
         console.log(error);
       });
+  }
+
+  handleUpvote = (event, id, index) => {
+    event.preventDefault();
+
+    axios.put(process.env.REACT_APP_API_PATH + '/posts/reactions/add/' + id)
+      .then(() => {
+        this.getHeadlines();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
+  }
+
+  handleDownvote = (event, id) => {
+    event.preventDefault();
+
+    axios.put(process.env.REACT_APP_API_PATH + '/posts/reactions/remove/' + id)
+      .then(() => {
+        this.getData();
+      })
+      .catch(error => {
+        alert(error);
+        console.log(error);
+      });
+  }
+
+  handleComment = (event, id) => {
+    this.setState({ loader: true });
+    event.preventDefault();
+    const req = {
+      user_id: this.Auth.getProfile().id,
+      photo: this.state.anon ? "" : this.state.photo,
+      name: this.state.anon ? "Anon" : this.Auth.getProfile().name,
+      directorate: this.Auth.getProfile().directorate,
+      message: this.state.myComment,
+      header: id
+    };
+    axios.post(process.env.REACT_APP_API_PATH + '/posts/comments', req)
+      .then(() => {
+        this.setState({
+          loader: false,
+          myComment: ""
+        })
+        this.getData();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleEmoji = (emoji) => {
+    this.setState({
+      myComment: this.state.myComment + emoji.native
+    })
   }
 
   toggleCheckin = () => {
@@ -288,8 +352,15 @@ class Dashboard extends Component {
             <Headlines
               directorate={this.state.directorate}
               directorateReply={this.state.directorateReply}
+              handleChange={this.handleChange}
+              handleComment={this.handleComment}
+              handleDownvote={this.handleDownvote}
+              handleEmoji={this.handleEmoji}
+              handleUpvote={this.handleUpvote}
               latest={this.state.latest}
               latestReply={this.state.latestReply}
+              loader={this.state.loader}
+              myComment={this.state.myComment}
               top={this.state.top}
               topReply={this.state.topReply}
             />
