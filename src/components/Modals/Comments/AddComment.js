@@ -55,6 +55,8 @@ class AddComment extends Component {
 
     const { comment, countReply, data, handleChange, handleComment, handleEmoji, myComment, toggleComment } = this.props;
 
+    const photo = data.photo === "" || data.photo === undefined ? "test.jpg" : data.photo;
+    const name = data.name === "" || data.name === undefined ? "Anon" : data.name;
     return (
       <Modal isOpen={comment} toggle={() => toggleComment(countReply, data)} className={'modal-danger modal-lg'}>
         <Form encType="multipart/form-data" className="form-horizontal">
@@ -62,10 +64,10 @@ class AddComment extends Component {
 
             <Row>
               <Col xs="1">
-                <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + data.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={data.photo} />
+                <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={photo} />
               </Col>
               <Col xs="11" className="p-0">
-                <strong>{data.name}</strong>
+                <strong>{name}</strong>
                 <small> {moment(data.createdAt).format("lll")}</small>
                 <p>Directorate {data.directorate}</p>
               </Col>
@@ -89,7 +91,7 @@ class AddComment extends Component {
                   <hr />
                   <Row>
                     <Col xs="1">
-                      <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={item.photo} />
+                      <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${item.photo === "" || item.photo === undefined ? "test.jpg" : item.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "36px", width: "36px" }} alt={item.photo} />
                     </Col>
                     <Col xs="11" className="p-0">
                       <strong>{item.name}</strong>

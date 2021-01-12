@@ -142,7 +142,7 @@ class Curhat extends Component {
     const req = {
       user_id: this.Auth.getProfile().id,
       photo: this.state.anon ? "" : this.state.photo,
-      name: this.state.anon ? "Anon" : this.Auth.getProfile().name,
+      name: this.state.anon ? "" : this.Auth.getProfile().name,
       directorate: this.Auth.getProfile().directorate,
       message: this.state.myComment,
       header: id
@@ -278,10 +278,10 @@ class Curhat extends Component {
                         <div key={i}>
                           <Row>
                             <Col xs="3" md="2" xl="1">
-                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                              <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${item.post.photo === "" || item.post.photo === undefined ? "test.jpg" : item.post.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
                             </Col>
                             <Col xs="9" md="10" xl="11" className="p-0">
-                              <strong>{item.post.name}</strong>
+                              <strong>{item.post.name === "" || item.post.name === undefined ? "Anon" : item.post.name}</strong>
                               <small> {moment(item.post.createdAt).format("lll")}</small>
                               <p>Directorate {item.post.directorate}</p>
                             </Col>
@@ -306,10 +306,10 @@ class Curhat extends Component {
                         <div key={i}>
                           <Row>
                             <Col xs="3" md="2" xl="1">
-                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                              <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${item.post.photo === "" || item.post.photo === undefined ? "test.jpg" : item.post.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
                             </Col>
                             <Col xs="9" md="10" xl="11" className="p-0">
-                              <strong>{item.post.name}</strong>
+                              <strong>{item.post.name === "" || item.post.name === undefined ? "Anon" : item.post.name}</strong>
                               <small> {moment(item.post.createdAt).format("lll")}</small>
                               <p>Directorate {item.post.directorate}</p>
                             </Col>
@@ -334,10 +334,10 @@ class Curhat extends Component {
                         <div key={i}>
                           <Row>
                             <Col xs="3" md="2" xl="1">
-                              <img src={process.env.REACT_APP_API_PATH + '/uploads/users/' + item.post.photo} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
+                              <img src={`${process.env.REACT_APP_API_PATH}/uploads/users/${item.post.photo === "" || item.post.photo === undefined ? "test.jpg" : item.post.photo}`} className="img-avatar position-absolute" style={{ objectFit: "cover", height: "48px", width: "48px" }} alt={item.post.photo} />
                             </Col>
                             <Col xs="9" md="10" xl="11" className="p-0">
-                              <strong>{item.post.name}</strong>
+                              <strong>{item.post.name === "" || item.post.name === undefined ? "Anon" : item.post.name}</strong>
                               <small> {moment(item.post.createdAt).format("lll")}</small>
                               <p>Directorate {item.post.directorate}</p>
                             </Col>

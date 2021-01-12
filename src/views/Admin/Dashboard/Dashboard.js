@@ -233,7 +233,7 @@ class Dashboard extends Component {
     const req = {
       user_id: this.Auth.getProfile().id,
       photo: this.state.anon ? "" : this.state.photo,
-      name: this.state.anon ? "Anon" : this.Auth.getProfile().name,
+      name: this.state.anon ? "" : this.Auth.getProfile().name,
       directorate: this.Auth.getProfile().directorate,
       message: this.state.myComment,
       header: id
